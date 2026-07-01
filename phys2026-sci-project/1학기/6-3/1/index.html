@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Science Quiz RNG & RPG - 과학의 힘으로 던전을 정복하자!</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="app-container">
+    <!-- 메인 게임 뷰포트 (Canvas + UI Overlays) -->
+    <div id="game-viewport">
+      
+      <!-- 2D 캔버스 -->
+      <canvas id="gameCanvas" width="1280" height="720"></canvas>
+
+      <!-- ROBLOX STYLE HUD -->
+      
+      <!-- 1. 화면 중앙 위: RNG 주사위 -->
+      <div class="roblox-hud-top-center">
+        <img src="rng_dice_icon.svg" alt="RNG Dice" class="roblox-dice-logo" onclick="uiManager.openQuizSpinner()" title="RNG 퀴즈 롤 열기">
+      </div>
+
+      <!-- 2. 화면 좌측 아래: 체력바 & 코인바 -->
+      <div class="roblox-hud-bottom-left">
+        <!-- 체력 행 -->
+        <div class="roblox-hud-row">
+          <div class="roblox-heart-container">
+            <svg class="roblox-heart-svg" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </div>
+          <div class="roblox-bar-container health-border">
+            <div id="health-bar" class="roblox-health-bar-fill"></div>
+            <span id="health-text" class="roblox-bar-text">100 / 100</span>
+          </div>
+        </div>
+
+        <!-- 코인 행 -->
+        <div class="roblox-hud-row" style="margin-top: -4px;">
+          <div class="roblox-coin-container">
+            <span class="roblox-coin-symbol">🪙</span>
+          </div>
+          <div class="roblox-bar-container coin-border">
+            <span id="coin-amount" class="roblox-coin-text">0</span>
+            <button class="roblox-plus-btn" onclick="uiManager.openShop()">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 화면 가운데 아래: 인벤토리 배낭 -->
+      <div class="roblox-hud-bottom-center">
+        <div class="roblox-inventory-btn" onclick="uiManager.openInventory()">
+          <div class="roblox-backpack-icon">
+            <svg viewBox="0 0 24 24">
+              <!-- 배낭을 시각화하는 귀여운 SVG 디자인 -->
+              <path d="M6 3h12a2 2 0 0 1 2 2v2H4V5a2 2 0 0 1 2-2zm-2 6h16v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V9zm6-4v2h4V5h-4zM6 12h12v2H6v-2z" />
+            </svg>
+          </div>
+          <span class="roblox-inventory-label">Inventory</span>
+        </div>
+      </div>
+
+      <!-- 4. 화면 우측 위: 콤팩트 보조 패널 (존 정보, 무기 뱃지, 오디오) -->
+      <div class="roblox-hud-top-right">
+        <div id="zone-indicator" class="roblox-compact-panel">
+          <span id="zone-text" style="font-size:0.75rem; font-weight:700;">로비 (Lobby)</span>
+        </div>
+
+        <div id="weapon-indicator" class="roblox-compact-panel" style="cursor: pointer;" onclick="uiManager.openInventory()">
+          <span id="weapon-rarity-badge" class="drawn-weapon-rarity rarity-rare" style="margin: 0; padding: 2px 6px; font-size: 0.65rem;">희귀</span>
+          <span id="weapon-name" style="font-size: 0.75rem; font-weight: bold;">쓰레기장에서 주운 물총</span>
+        </div>
+
+        <button class="roblox-compact-panel roblox-icon-btn" id="mute-btn" type="button" onclick="uiManager.toggleMute()" aria-label="소리 끄기" aria-pressed="false" title="소리 끄기">
+          <span id="mute-icon" style="font-size:0.8rem;">🔊</span>
+        </button>
+
+        <div class="roblox-compact-panel" onclick="uiManager.openHelp()" style="cursor: pointer; padding: 6px 10px;">
+          <span style="font-size:0.8rem; font-weight:900;">❓</span>
+        </div>
+      </div>
+
+      <!-- 상호작용 힌트 텍스트 -->
+      <div id="interaction-hint"></div>
+
+      <!-- 토스트 알림 배너 -->
+      <div id="toast-notification">
+        <span id="toast-icon">✨</span>
+        <span id="toast-message">알림 메시지</span>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- OVERLAY SCREENS (모달창 모음) -->
+      <!-- ============================================== -->
+
+      <!-- 1. RNG 퀴즈 뽑기 대기 화면 -->
+      <div id="quiz-gacha-screen" class="overlay-screen">
+        <div class="modal-content gacha-modal">
+          <div class="close-btn" onclick="uiManager.closeAllOverlays()">&times;</div>
+          <div class="gacha-header">
+            <div class="gacha-core">
+              <span>?</span>
+            </div>
+            <div class="gacha-heading">
+              <div class="gacha-kicker">SCIENCE RNG TERMINAL</div>
+              <h2 class="gacha-title">RNG 과학 퀴즈 머신</h2>
+              <div class="gacha-subtitle">난이도와 코인 보상이 동시에 결정됩니다.</div>
+            </div>
+          </div>
+
+          <div class="gacha-tier-strip" aria-hidden="true">
+            <span class="tier-chip lvl-item-1">1단계</span>
+            <span class="tier-chip lvl-item-2">2단계</span>
+            <span class="tier-chip lvl-item-3">3단계</span>
+            <span class="tier-chip lvl-item-4">4단계</span>
+            <span class="tier-chip lvl-item-5">5단계</span>
+          </div>
+
+          <!-- 뽑기 스피너 -->
+          <div class="spinner-shell">
+            <div class="spinner-glass"></div>
+            <div class="spinner-container">
+              <div class="spinner-pointer"></div>
+              <div id="spinner-track" class="spinner-track">
+                <!-- JS에서 아이템들을 가득 채웁니다 -->
+              </div>
+            </div>
+            <div class="spinner-readout">
+              <span>LOCK</span>
+              <span>REWARD</span>
+              <span>QUIZ</span>
+            </div>
+          </div>
+
+          <button id="roll-quiz-btn" class="gacha-action-btn" onclick="uiManager.rollQuizDifficulty()">RNG Quiz Roll (무료)</button>
+        </div>
+      </div>
+
+      <!-- 2. O/X 퀴즈 푸는 화면 -->
+      <div id="quiz-modal-screen" class="overlay-screen">
+        <div class="modal-content">
+          <!-- 퀴즈 문제 뷰 -->
+          <div id="quiz-question-view">
+            <div class="quiz-header">
+              <span id="quiz-level-badge" class="quiz-badge lvl-item-1">1단계</span>
+              <span id="quiz-reward-text" style="color: #fbbf24; font-weight: 700;">🪙 5 코인</span>
+              <span id="quiz-unit-name" class="quiz-unit">1단원: 산과 염기</span>
+            </div>
+            
+            <div id="quiz-question-text" class="quiz-question">
+              이곳에 퀴즈 내용이 표시됩니다.
+            </div>
+
+            <div class="quiz-options">
+              <button class="option-btn o-btn" onclick="uiManager.submitQuizAnswer(true)">O</button>
+              <button class="option-btn x-btn" onclick="uiManager.submitQuizAnswer(false)">X</button>
+            </div>
+          </div>
+
+          <!-- 퀴즈 결과 뷰 -->
+          <div id="quiz-result-view" class="quiz-result-view">
+            <div id="result-icon" class="result-icon">✅</div>
+            <h3 id="result-title" class="result-title">정답입니다!</h3>
+            <div id="result-explanation" class="result-explanation">
+              설명 내용이 들어갑니다.
+            </div>
+            <button class="gacha-action-btn" onclick="uiManager.closeQuizResult()">확인</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 무기 상점 뽑기 화면 -->
+      <div id="shop-screen" class="overlay-screen">
+        <div class="modal-content">
+          <div class="close-btn" onclick="uiManager.closeAllOverlays()">&times;</div>
+          <h2 class="gacha-title" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">물총 뽑기 상점</h2>
+          
+          <div class="shop-item-card">
+            <span style="font-size: 3rem;">🎁</span>
+            <h3 style="margin-top: 10px;">RNG 물총 상자</h3>
+            <div class="shop-cost">🪙 35 코인 필요</div>
+            <p style="color: var(--text-muted); font-size: 0.85rem; max-width: 320px; margin-bottom: 15px;">
+              [확률 안내]<br>
+              희귀(50%) | 에픽(35%) | 신화(12%) | 전설(3%)
+            </p>
+            <button id="buy-weapon-btn" class="gacha-action-btn" onclick="uiManager.buyWeaponGacha()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">무기 상자 개봉</button>
+          </div>
+
+          <!-- 뽑힌 무기 표시부 -->
+          <div id="weapon-draw-display" class="weapon-draw-display">
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 5px;">획득한 무기!</p>
+            <span id="draw-rarity" class="drawn-weapon-rarity rarity-rare">희귀</span>
+            <h3 id="draw-name" class="drawn-weapon-name">쓰레기장에서 주운 물총</h3>
+            <div class="drawn-weapon-stats">
+              <div>공격력: <span id="draw-stat-damage" style="color: white; font-weight: bold;">5</span></div>
+              <div>연사 속도: <span id="draw-stat-speed" style="color: white; font-weight: bold;">0.8s</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 무기 보관함 (인벤토리) 화면 -->
+      <div id="inventory-screen" class="overlay-screen">
+        <div class="modal-content">
+          <div class="close-btn" onclick="uiManager.closeAllOverlays()">&times;</div>
+          <h2 class="gacha-title" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">무기 보관함</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">
+            소지하고 있는 물총 목록입니다. 원하시는 물총을 클릭하여 장착하세요.
+          </p>
+
+          <div id="inventory-list" class="inventory-list">
+            <!-- 인벤토리 항목이 채워지는 영역 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 도움말 및 조작 안내 화면 -->
+      <div id="help-screen" class="overlay-screen">
+        <div class="modal-content">
+          <div class="close-btn" onclick="uiManager.closeAllOverlays()">&times;</div>
+          <h2 class="gacha-title">조작 및 게임 방법</h2>
+          
+          <div class="help-content">
+            <div class="help-section">
+              <h3 class="help-title">기본 조작</h3>
+              <div>• 캐릭터 이동: <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> 또는 <kbd>방향키</kbd></div>
+              <div>• 물총 발사: 마우스 커서 방향 조준 + <kbd>마우스 왼쪽 클릭</kbd></div>
+              <div>• 상호작용: 오브젝트 근처에서 <kbd>E</kbd> 키 클릭</div>
+            </div>
+
+            <div class="help-section">
+              <h3 class="help-title">플레이 가이드</h3>
+              <div>1. 화면 위쪽의 <strong>RNG 주사위</strong>를 눌러 퀴즈 난이도를 롤링하고, 과학 문제를 맞춰 코인을 얻으세요!</div>
+              <div>2. <strong>35 코인</strong>이 모이면 <strong>상점 NPC</strong>나 HUD를 통해 가차 상자에서 강력한 물총을 뽑아보세요.</div>
+              <div>3. <strong>텔레포트 존</strong>(파란색 포탈)에 들어가면 몬스터가 나오는 던전으로 이동합니다.</div>
+              <div>4. <strong>던전</strong>은 1구역부터 3구역까지 있으며, 모든 몬스터를 쓰러뜨려야 다음 구역으로 가는 봉인이 해제됩니다.</div>
+              <div>5. <strong>3구역 보스</strong>를 처치하고 던전을 완전 정복해 보세요!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 스크립트 연결 -->
+  <script src="quiz.js"></script>
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

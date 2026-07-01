@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>물총 대전 | Water Gun Battle</title>
+    <meta name="description" content="AI와 대전하는 물총 슈팅 게임 - 카드 시스템과 과학 퀴즈가 결합된 전략 액션 게임">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas" tabindex="1"></canvas>
+
+        <!-- Start Screen -->
+        <div id="start-screen">
+            <div class="start-content">
+                <h1 class="game-title">
+                    <span class="title-water">물총</span>
+                    <span class="title-battle">대전</span>
+                </h1>
+                <p class="subtitle">WATER GUN BATTLE</p>
+                <div class="start-divider"></div>
+
+                <div class="color-customizer" aria-label="캐릭터 색 꾸미기">
+                    <div class="color-row">
+                        <span>PLAYER 1 색</span>
+                        <button type="button" class="color-swatch active" data-target="p1" data-color="#4a9eff" style="--swatch-color: #4a9eff" aria-label="PLAYER 1 파란색" aria-pressed="true"></button>
+                        <button type="button" class="color-swatch" data-target="p1" data-color="#4CAF50" style="--swatch-color: #4CAF50" aria-label="PLAYER 1 초록색" aria-pressed="false"></button>
+                        <button type="button" class="color-swatch" data-target="p1" data-color="#ffd54f" style="--swatch-color: #ffd54f" aria-label="PLAYER 1 노란색" aria-pressed="false"></button>
+                        <button type="button" class="color-swatch" data-target="p1" data-color="#ff7a45" style="--swatch-color: #ff7a45" aria-label="PLAYER 1 주황색" aria-pressed="false"></button>
+                    </div>
+                    <div class="color-row">
+                        <span>AI 색</span>
+                        <button type="button" class="color-swatch active" data-target="p2" data-color="#ff4a4a" style="--swatch-color: #ff4a4a" aria-label="AI 빨간색" aria-pressed="true"></button>
+                        <button type="button" class="color-swatch" data-target="p2" data-color="#ab47bc" style="--swatch-color: #ab47bc" aria-label="AI 보라색" aria-pressed="false"></button>
+                        <button type="button" class="color-swatch" data-target="p2" data-color="#00bcd4" style="--swatch-color: #00bcd4" aria-label="AI 청록색" aria-pressed="false"></button>
+                        <button type="button" class="color-swatch" data-target="p2" data-color="#f06292" style="--swatch-color: #f06292" aria-label="AI 분홍색" aria-pressed="false"></button>
+                    </div>
+                </div>
+
+                <div class="menu-settings" aria-label="게임 설정">
+                    <div class="setting-block">
+                        <h3>조작법</h3>
+                        <div class="segmented-control" role="group" aria-label="조작법 선택">
+                            <button type="button" class="option-btn active" data-setting="control" data-value="mouse" aria-pressed="true">마우스</button>
+                            <button type="button" class="option-btn" data-setting="control" data-value="keyboard" aria-pressed="false">키보드</button>
+                            <button type="button" class="option-btn" data-setting="control" data-value="auto" aria-pressed="false">자동 조준</button>
+                        </div>
+                    </div>
+                    <div class="setting-block">
+                        <h3>AI 실력</h3>
+                        <div class="segmented-control" role="group" aria-label="AI 실력 선택">
+                            <button type="button" class="option-btn" data-setting="ai" data-value="easy" aria-pressed="false">쉬움</button>
+                            <button type="button" class="option-btn active" data-setting="ai" data-value="normal" aria-pressed="true">보통</button>
+                            <button type="button" class="option-btn" data-setting="ai" data-value="hard" aria-pressed="false">어려움</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btn-start" class="glow-btn">게임 시작</button>
+                <div class="controls-info">
+                    <div class="control-col">
+                        <h3 class="p1-color">PLAYER 1</h3>
+                        <p>이동: A/D 또는 ←/→</p>
+                        <p>점프: W 또는 ↑</p>
+                        <p>방어: S/↓ 또는 우클릭</p>
+                        <p>조준/발사: 마우스 또는 Space</p>
+                    </div>
+                    <div class="control-col">
+                        <h3 class="p2-color">AI 상대</h3>
+                        <p>3승 시 게임 종료</p>
+                        <p>1승마다 카드 선택</p>
+                        <p>구조물 퀴즈로 능력 강화</p>
+                        <p>360도 조준 사격</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Round Overlay -->
+        <div id="overlay" class="modal-overlay hidden">
+            <div class="overlay-content">
+                <h1 id="overlay-text"></h1>
+                <p id="overlay-subtext"></p>
+                <button id="overlay-btn" class="glow-btn hidden">계속</button>
+            </div>
+        </div>
+
+        <!-- Card Selection Modal -->
+        <div id="card-modal" class="modal-overlay hidden">
+            <div class="card-modal-content">
+                <h2 id="card-modal-title" class="modal-title">카드를 선택하세요</h2>
+                <p id="card-modal-subtitle" class="modal-subtitle"></p>
+                <div id="card-container" class="card-grid"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Modal -->
+        <div id="quiz-modal" class="modal-overlay hidden">
+            <div class="quiz-modal-content">
+                <div class="quiz-header">
+                <span class="quiz-badge">SCIENCE QUIZ</span>
+                    <p id="quiz-player-info" class="quiz-player"></p>
+                </div>
+                <p id="quiz-question" class="quiz-question-text"></p>
+                <div id="quiz-options" class="quiz-options-grid"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Result -->
+        <div id="quiz-result" class="modal-overlay hidden">
+            <div class="quiz-result-content">
+                <div id="quiz-result-icon" class="result-icon"></div>
+                <h2 id="quiz-result-title"></h2>
+                <p id="quiz-result-explanation" class="result-explanation"></p>
+                <button id="quiz-result-btn" class="glow-btn">확인</button>
+            </div>
+        </div>
+
+        <!-- Mobile Controls -->
+        <div id="mobile-controls" class="hidden">
+            <!-- Left: Joystick -->
+            <div id="joystick-zone">
+                <div id="joystick-base">
+                    <div id="joystick-stick"></div>
+                </div>
+            </div>
+            <!-- Right: Action Buttons -->
+            <div id="action-buttons">
+                <button id="btn-jump" class="action-btn jump-btn">
+                    <span>JUMP</span>
+                    <small>점프</small>
+                </button>
+                <button id="btn-shoot" class="action-btn shoot-btn">
+                    <span>FIRE</span>
+                    <small>발사</small>
+                </button>
+                <button id="btn-defend" class="action-btn defend-btn">
+                    <span>DEF</span>
+                    <small>방어</small>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="quiz.js"></script>
+    <script src="cards.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

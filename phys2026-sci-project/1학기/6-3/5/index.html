@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="과학 미로 탈출 - 6학년 1학기 과학 퀴즈를 풀며 과학쌤을 피해 미로를 탈출하세요!">
+    <title>🔬 과학 미로 탈출</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="game-wrapper">
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- HUD -->
+        <div id="hud">
+            <div class="hud-item" id="score-display">
+                <span class="icon">📝</span> 문제: 0/3
+            </div>
+            <div class="hud-item" id="stun-display" class="hidden">
+                ⚡ 기절: 0.0초
+            </div>
+            <div class="hud-item" id="quiz-required">
+                🔒 3문제 더
+            </div>
+        </div>
+
+        <!-- Stun Effect Border -->
+        <div id="stun-effect"></div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen-overlay">
+            <div class="glass-panel">
+                <span class="emoji-title">🔬</span>
+                <h1>과학 미로 탈출</h1>
+                <p class="subtitle">6학년 1학기 과학</p>
+
+                <div class="instructions">
+                    <div class="rule">
+                        <span class="rule-icon">🏃</span>
+                        <span><strong>방향키/WASD</strong>로 미로를 이동하세요</span>
+                    </div>
+                    <div class="rule">
+                        <span class="rule-icon">❓</span>
+                        <span><strong>초록 물음표</strong>에 닿으면 퀴즈가 나와요</span>
+                    </div>
+                    <div class="rule">
+                        <span class="rule-icon">😵</span>
+                        <span>정답을 맞히면 <strong>과학쌤이 3초간 기절</strong>해요</span>
+                    </div>
+                    <div class="rule">
+                        <span class="rule-icon">🔒</span>
+                        <span><strong>3문제 이상</strong> 풀어야 출구가 열려요</span>
+                    </div>
+                    <div class="rule">
+                        <span class="rule-icon">⚠️</span>
+                        <span>과학쌤에게 <strong>잡히면 게임 오버!</strong></span>
+                    </div>
+                </div>
+
+                <button id="start-btn" class="btn btn-primary">🚀 게임 시작</button>
+            </div>
+        </div>
+
+        <!-- Countdown -->
+        <div id="countdown" class="hidden">
+            <span class="count-num">3</span>
+        </div>
+
+        <!-- Quiz Modal -->
+        <div id="quiz-modal" class="screen-overlay hidden">
+            <div class="glass-panel">
+                <span class="quiz-category" id="quiz-category">카테고리</span>
+                <div class="quiz-question-text" id="quiz-question">질문</div>
+                <div id="quiz-options"></div>
+                <div id="quiz-feedback"></div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameover-screen" class="screen-overlay hidden">
+            <div class="glass-panel">
+                <span class="gameover-emoji">😱</span>
+                <h2>과학쌤에게 잡혔다!</h2>
+                <p>과학쌤이 당신을 붙잡았습니다...</p>
+                <div class="stat-grid mt-12">
+                    <div class="stat-item">
+                        <div class="stat-value" id="gameover-solved">0</div>
+                        <div class="stat-label">푼 문제 수</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">💪</div>
+                        <div class="stat-label">다시 도전!</div>
+                    </div>
+                </div>
+                <button id="retry-btn" class="btn btn-danger mt-20">🔄 다시 도전</button>
+            </div>
+        </div>
+
+        <!-- Win Screen -->
+        <div id="win-screen" class="screen-overlay hidden">
+            <div class="glass-panel">
+                <span class="win-emoji">🎉</span>
+                <h2>탈출 성공!</h2>
+                <p>축하합니다! 미로를 탈출했어요!</p>
+                <div class="stat-grid mt-12">
+                    <div class="stat-item">
+                        <div class="stat-value" id="win-solved">0</div>
+                        <div class="stat-label">푼 문제 수</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="win-time">0초</div>
+                        <div class="stat-label">클리어 시간</div>
+                    </div>
+                </div>
+                <button id="replay-btn" class="btn btn-success mt-20">🏆 다시 플레이</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile D-Pad Controls -->
+    <div id="mobile-controls">
+        <div class="dpad">
+            <div class="dpad-btn empty"></div>
+            <button class="dpad-btn dpad-up" aria-label="위로 이동">▲</button>
+            <div class="dpad-btn empty"></div>
+            <button class="dpad-btn dpad-left" aria-label="왼쪽으로 이동">◀</button>
+            <div class="dpad-btn dpad-center empty"></div>
+            <button class="dpad-btn dpad-right" aria-label="오른쪽으로 이동">▶</button>
+            <div class="dpad-btn empty"></div>
+            <button class="dpad-btn dpad-down" aria-label="아래로 이동">▼</button>
+            <div class="dpad-btn empty"></div>
+        </div>
+    </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

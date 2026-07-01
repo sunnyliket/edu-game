@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape Room 3D Science RPG</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Load Three.js and Cannon.js globally -->
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
+    <script src="https://unpkg.com/cannon@0.6.2/build/cannon.min.js"></script>
+</head>
+<body>
+    <!-- Crosshair -->
+    <div id="crosshair"></div>
+
+    <!-- UI Elements -->
+    <div id="health-ui">HP: <span id="hp-value">1000</span></div>
+    <div id="boss-health-ui" class="hidden">Teacher HP: <span id="boss-hp-value">202661</span></div>
+    <div id="stage-ui">Stage: <span id="stage-value">1</span></div>
+    
+    <!-- Popup UI -->
+    <div id="popup-overlay" class="hidden">
+        <div id="popup-content">
+            <h2 id="popup-title">문제</h2>
+            <p id="popup-text">문제가 여기에 표시됩니다.</p>
+            <div id="popup-options"></div>
+            <button id="popup-close" class="hidden">닫기</button>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip-ui" class="hidden">사물 설명</div>
+
+    <!-- Start Screen -->
+    <div id="start-screen">
+        <h1>방탈출: 과학의 방</h1>
+        <p>어두운 방에 납치된 서진, 민승, 지후, 지우.</p>
+        <p>조작: W, A, S, D 이동 / Space 점프 / 마우스 시선 / 좌클릭 상호작용 / 우클릭 해설</p>
+        <button id="start-btn">게임 시작</button>
+        <div id="error-log" style="color: red; margin-top: 20px;"></div>
+    </div>
+
+    <!-- Data and Main Logic -->
+    <script src="js/QuizData.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

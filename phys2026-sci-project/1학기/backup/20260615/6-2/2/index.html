@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가게 차리기 오키</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="app">
+        <section class="topbar">
+            <div>
+                <h1>가게 차리기 오키</h1>
+                <p id="phaseText">돈을 벌기 위해 작은 디저트 가게를 차리게 되었다.</p>
+            </div>
+            <div class="stats">
+                <span>💰 <strong id="moneyText">0</strong>원</span>
+                <span>⭐ <strong id="repText">0</strong></span>
+            </div>
+        </section>
+
+        <section id="missionPanel" class="mission-panel">
+            <button id="missionCloseBtn" class="icon-btn" aria-label="미션 창 닫기">×</button>
+            <strong id="missionTitle">미션</strong>
+            <p id="missionText">가게를 청소하자!</p>
+        </section>
+
+        <section id="gameStage" class="game-stage shop-stage">
+            <div id="player" class="player" aria-label="플레이어">
+                <div class="player-head"></div>
+                <div class="player-body"></div>
+            </div>
+
+            <div id="shopScene" class="scene active">
+                <div class="shop-back-wall">
+                    <div class="shop-sign">OKI DESSERT</div>
+                    <div class="window"></div>
+                    <div class="shelf shelf-left"></div>
+                    <div class="shelf shelf-right"></div>
+                </div>
+                <div class="counter">
+                    <span class="register">계산대</span>
+                </div>
+                <div id="messLayer" class="mess-layer"></div>
+                <button id="goMarketBtn" class="primary-btn hidden">마트로 가기</button>
+            </div>
+
+            <div id="marketScene" class="scene">
+                <aside class="shopping-note">
+                    <h2>살 재료</h2>
+                    <ul id="shoppingList">
+                        <li data-ingredient="butter">버터</li>
+                        <li data-ingredient="flour">박력분</li>
+                        <li data-ingredient="choco">초코칩</li>
+                        <li data-ingredient="egg">계란</li>
+                    </ul>
+                </aside>
+                <div class="market-shelves">
+                    <button class="ingredient-card" data-ingredient="butter">
+                        <span class="ingredient-icon">🧈</span>
+                        <strong>버터</strong>
+                    </button>
+                    <button class="ingredient-card" data-ingredient="flour">
+                        <span class="ingredient-icon">🥣</span>
+                        <strong>박력분</strong>
+                    </button>
+                    <button class="ingredient-card" data-ingredient="choco">
+                        <span class="ingredient-icon">🍫</span>
+                        <strong>초코칩</strong>
+                    </button>
+                    <button class="ingredient-card" data-ingredient="egg">
+                        <span class="ingredient-icon">🥚</span>
+                        <strong>계란</strong>
+                    </button>
+                </div>
+            </div>
+
+            <div id="kitchenScene" class="scene">
+                <div class="customer-card">
+                    <div class="customer-avatar">😊</div>
+                    <div>
+                        <strong>첫 손님</strong>
+                        <p>초코칩 쿠키 5개 주세요!</p>
+                    </div>
+                </div>
+
+                <div class="recipe-card">
+                    <h2>초코칩 쿠키 만들기</h2>
+                    <ol id="recipeSteps">
+                        <li data-step="butter">믹싱볼에 실온 버터 넣기</li>
+                        <li data-step="mash">실리콘 주걱으로 버터 으깨기</li>
+                        <li data-step="egg">계란 넣기</li>
+                        <li data-step="stir">11자로 젓기</li>
+                        <li data-step="sugar">설탕 넣고 섞기</li>
+                        <li data-step="flour">박력분 체 쳐 넣기</li>
+                        <li data-step="choco">초코칩 넣기</li>
+                        <li data-step="tray">반죽 5개를 오븐 판에 놓기</li>
+                        <li data-step="bake">오븐에 굽기</li>
+                    </ol>
+                </div>
+
+                <div class="kitchen-workbench">
+                    <div id="mixingBowl" class="mixing-bowl">
+                        <span id="bowlLabel">믹싱볼</span>
+                    </div>
+                    <div id="ovenTray" class="oven-tray"></div>
+                    <button class="tool-btn" data-action="butter">🧈 버터</button>
+                    <button class="tool-btn" data-action="mash">🥄 주걱</button>
+                    <button class="tool-btn" data-action="egg">🥚 계란</button>
+                    <button class="tool-btn" data-action="stir">↕ 11자 젓기</button>
+                    <button class="tool-btn" data-action="sugar">🧂 설탕</button>
+                    <button class="tool-btn" data-action="flour">🥣 체 친 박력분</button>
+                    <button class="tool-btn" data-action="choco">🍫 초코칩</button>
+                    <button class="tool-btn" data-action="tray">🍪 반죽 놓기</button>
+                    <button class="tool-btn" data-action="bake">🔥 굽기</button>
+                </div>
+
+                <button id="serveBtn" class="primary-btn hidden">손님에게 쿠키 전달하기</button>
+            </div>
+
+            <div id="completeScene" class="scene">
+                <div class="complete-card">
+                    <h2>첫 장사 성공!</h2>
+                    <p>손님이 초코칩 쿠키 5개를 받고 활짝 웃었습니다.</p>
+                    <p>가게 평판이 오르고 첫 매출을 얻었어요.</p>
+                    <button id="restartBtn" class="primary-btn">처음부터 다시 하기</button>
+                </div>
+            </div>
+        </section>
+
+        <aside class="recipe-book">
+            <h2>앞으로 만들 메뉴</h2>
+            <details open>
+                <summary>초코칩 쿠키</summary>
+                <p>버터, 박력분, 초코칩, 계란</p>
+            </details>
+            <details>
+                <summary>도넛</summary>
+                <p>강력분, 중탕 할 초콜릿, 스프링클, 계란, 버터, 도넛 틀, 체</p>
+            </details>
+            <details>
+                <summary>머랭쿠키</summary>
+                <p>계란 흰자, 설탕, 휘핑기, 레몬즙</p>
+            </details>
+            <details>
+                <summary>마들렌</summary>
+                <p>버터, 계란, 박력분, 설탕, 마들렌 틀, 체</p>
+            </details>
+            <details>
+                <summary>마카롱</summary>
+                <p>슈가 파우더, 계란흰자, 설탕, 식용색소, 체, 생크림, 휘핑기, 짤주머니</p>
+            </details>
+            <details>
+                <summary>두쫀쿠</summary>
+                <p>마쉬멜로우, 코코아 파우더, 체, 피스타치오 스프레드, 카다이프, 버터, 화이트 초콜릿</p>
+            </details>
+            <details>
+                <summary>딸기 케이크</summary>
+                <p>딸기, 휘핑크림, 휘핑기, 계란 흰자, 케이크 시트 틀, 계란 노른자</p>
+            </details>
+        </aside>
+    </main>
+
+    <div id="introModal" class="modal visible">
+        <div class="modal-card intro-card">
+            <h2>가게 차리기 오키</h2>
+            <p>돈을 벌기 위해 플레이어는 오래된 디저트 가게를 열기로 했다.</p>
+            <p>그런데 문을 열자마자 보이는 건 먼지, 쓰레기, 어질러진 가게!</p>
+            <button id="startBtn" class="primary-btn">가게 열기</button>
+        </div>
+    </div>
+
+    <div id="quizModal" class="modal">
+        <div class="modal-card">
+            <button id="quizCloseBtn" class="icon-btn" aria-label="문제 창 닫기">×</button>
+            <h2 id="quizTitle">재료 문제</h2>
+            <p id="quizQuestion"></p>
+            <div id="quizOptions" class="quiz-options"></div>
+            <p id="quizFeedback" class="feedback"></p>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

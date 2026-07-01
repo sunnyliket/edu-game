@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>과학 초능력 - 마인크래프트 과학 모험</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <div>
+                <p class="game-subtitle">마인크래프트 스타일 과학 모험</p>
+                <h1>과학 초능력</h1>
+            </div>
+            <div class="header-info">
+                <span id="stage-info">스테이지 1/6</span>
+                <span id="playerNameBadge">플레이어: 손님</span>
+                <span id="score">점수: 0</span>
+                <span id="villageStatus">마을 정화도: 0%</span>
+                <button id="resetButton" class="pixel-button pixel-button-small" type="button">처음부터</button>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div class="game-background" id="gameBackground"></div>
+
+            <section id="startScreen" class="screen active">
+                <div class="start-content">
+                    <div class="start-emblem">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <p class="chapter-label">과학 마을에 오신 것을 환영합니다</p>
+                    <h2>흩어진 과학 초능력을 되찾자!</h2>
+                    <p>
+                        산성 몬스터와 염기성 몬스터가 마을을 오염시키고 있어요.
+                        마을을 직접 탐험하며 힌트를 모으고, 숨은 과학 조각을 찾아 포탈을 열어 주세요.
+                    </p>
+                    <label class="nickname-field">
+                        <span>닉네임</span>
+                        <input id="nicknameInput" type="text" maxlength="10" placeholder="예: 과학용사" autocomplete="off">
+                    </label>
+                    <div class="start-actions">
+                        <button class="pixel-button pixel-button-primary" type="button" onclick="game.startGame()">새 모험 시작</button>
+                        <button id="continueButton" class="pixel-button" type="button" onclick="game.continueGame()" hidden>저장된 모험 이어하기</button>
+                    </div>
+                    <div class="key-guide">
+                        <span>이동: 방향키 또는 WASD</span>
+                        <span>대화: Q</span>
+                        <span>채집: E</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="worldScreen" class="screen">
+                <div class="world-hud">
+                    <div class="quest-panel">
+                        <p class="panel-title">현재 목표</p>
+                        <div id="questText" class="quest-list">주민을 만나세요.</div>
+                    </div>
+                    <div class="stage-panel">
+                        <p id="worldStageTitle">스테이지 1: 산과 염기</p>
+                        <div class="clean-meter" aria-label="마을 정화도">
+                            <span id="cleanMeterFill"></span>
+                        </div>
+                    </div>
+                    <div class="player-panel">
+                        <p>에너지</p>
+                        <div class="energy-bar"><span></span></div>
+                        <p id="worldInventory" class="world-inventory">조각 0개 · 열쇠 0개</p>
+                    </div>
+                    <div class="world-control-panel" aria-label="조작 안내">
+                        <p><strong>이동</strong> W A S D · 방향키</p>
+                        <p><strong>시야</strong> 마우스 드래그 또는 화면 클릭</p>
+                        <p><strong>대화</strong> Q · <strong>채집</strong> E · <strong>달리기</strong> Shift</p>
+                    </div>
+                </div>
+
+                <div id="worldMap" class="world-map world-map-3d" aria-label="1인칭 3D 탐험 지도">
+                    <canvas id="worldCanvas" aria-label="1인칭 3D 블록 월드"></canvas>
+                    <div class="world-crosshair" aria-hidden="true"></div>
+                    <div id="worldViewLabel" class="world-view-label">1인칭 과학의 마을</div>
+                    <div class="mini-map-panel" aria-label="미니맵">
+                        <div class="mini-map-title">미니맵</div>
+                        <canvas id="miniMapCanvas" width="156" height="156" aria-label="주변 미니맵"></canvas>
+                        <div id="miniMapCoords" class="mini-map-coords">X 2 · Y 11</div>
+                    </div>
+                </div>
+                <div id="interactPrompt" class="interact-prompt" hidden>Q 키: 대화 · E 키: 채집</div>
+
+                <div class="touch-controls" aria-label="이동 버튼">
+                    <button type="button" data-move="up">▲</button>
+                    <div>
+                        <button type="button" data-move="left">◀</button>
+                        <button type="button" data-move="down">▼</button>
+                        <button type="button" data-move="right">▶</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="dungeonScreen" class="screen">
+                <div class="dungeon-frame">
+                    <div class="dungeon-header">
+                        <div>
+                            <p class="chapter-label">퀴즈 던전</p>
+                            <h2 id="dungeonTitle">스테이지 1: 산과 염기</h2>
+                        </div>
+                        <div class="dungeon-stats">
+                            <div id="timerPanel" class="timer-panel" hidden>
+                                <span>남은 시간</span>
+                                <strong id="timerText">60초</strong>
+                            </div>
+                            <div id="accuracyPanel" class="accuracy-panel">
+                                <span>정확도</span>
+                                <strong id="accuracyText">0%</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="bossPanel" class="boss-panel" hidden>
+                        <div class="boss-title">
+                            <span id="bossName">오염 골렘</span>
+                            <span id="bossHpText">체력 5/5</span>
+                        </div>
+                        <div class="boss-hp-bar">
+                            <span id="bossHpFill"></span>
+                        </div>
+                    </div>
+
+                    <div id="quizCard" class="quiz-card">
+                        <div class="quiz-topline">
+                            <span id="questionCounter">문제 1/11</span>
+                            <span id="quizRewardHint">에메랄드 +1</span>
+                        </div>
+                        <div class="progress-bar">
+                            <span id="quizProgress"></span>
+                        </div>
+                        <h3 id="questionText">문제가 여기에 표시됩니다.</h3>
+                        <div id="answerOptions" class="answer-options"></div>
+                        <div id="quizFeedback" class="feedback" aria-live="polite"></div>
+                        <button id="submitAnswerButton" class="pixel-button pixel-button-primary" type="button">정답 확인</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="completeScreen" class="screen">
+                <div class="complete-content">
+                    <div class="fireworks" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <p class="chapter-label">마을 완전 정화</p>
+                    <h2>과학 초능력 완전 해방!</h2>
+                    <p class="ending-line">주민과 철골렘이 돌아왔고, 모두 고기를 먹으며 쉬고 있어요.</p>
+                    <div class="ending-village">
+                        <div class="ending-character villager"></div>
+                        <div class="ending-character golem"></div>
+                        <div class="ending-feast">고기 만찬</div>
+                        <div class="ending-character villager second"></div>
+                    </div>
+                    <div class="final-results">
+                        <p id="finalScore">최종 점수: 0</p>
+                        <p id="finalAccuracy">정확도: 0%</p>
+                        <p id="finalEmeralds">에메랄드: 0개</p>
+                    </div>
+                    <div id="finalPowers" class="final-powers"></div>
+                    <button class="pixel-button pixel-button-primary" type="button" onclick="game.restart()">다시 시작</button>
+                </div>
+            </section>
+
+            <div id="dialogueOverlay" class="dialogue-overlay" hidden>
+                <div class="dialogue-box">
+                    <div id="dialoguePortrait" class="dialogue-portrait villager"></div>
+                    <div class="dialogue-content">
+                        <p id="dialogueSpeaker" class="dialogue-speaker">주민</p>
+                        <p id="dialogueText">대사가 표시됩니다.</p>
+                    </div>
+                    <button id="dialogueNextButton" class="pixel-button" type="button">확인</button>
+                </div>
+            </div>
+
+            <div id="stageTitleOverlay" class="stage-title-overlay" hidden>
+                <p id="stageTitleNumber">스테이지 1</p>
+                <h2 id="stageTitleName">산과 염기</h2>
+            </div>
+
+            <div id="portalTransition" class="portal-transition" hidden>
+                <div class="portal-core"></div>
+                <p>포탈 이동 중...</p>
+            </div>
+
+            <div id="rewardModal" class="reward-modal" hidden>
+                <div class="reward-box">
+                    <p class="chapter-label">보상 획득</p>
+                    <h2 id="rewardTitle">초능력 획득!</h2>
+                    <p id="rewardText">마을이 조금 더 밝아졌어요.</p>
+                    <button id="rewardButton" class="pixel-button pixel-button-primary" type="button">다음으로</button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="powers-display">
+            <div class="inventory-slot" id="power1"><span>산염기</span></div>
+            <div class="inventory-slot" id="power2"><span>운동</span></div>
+            <div class="inventory-slot" id="power3"><span>식물</span></div>
+            <div class="inventory-slot" id="power4"><span>지구</span></div>
+            <div class="inventory-slot" id="power5"><span>보스</span></div>
+            <div class="inventory-slot" id="power6"><span>휴식</span></div>
+            <div class="emerald-counter">에메랄드 <strong id="emeraldCount">0</strong></div>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

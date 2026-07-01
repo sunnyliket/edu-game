@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과학실 탈출</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="game-shell" aria-live="polite">
+    <section class="lab-stage" aria-label="과학실 탈출 게임 화면">
+      <div class="atmosphere"></div>
+
+      <header class="hud" aria-label="게임 상태">
+        <div class="title-lockup">
+          <span class="eyebrow">Science Lab Escape</span>
+          <h1>과학실 탈출</h1>
+        </div>
+        <div class="status-strip">
+          <div class="status-pill">
+            <span>열쇠</span>
+            <strong id="key-count">0 / 10</strong>
+          </div>
+          <div class="status-pill warning">
+            <span>진실의 방</span>
+            <strong id="truth-count">0회</strong>
+          </div>
+          <div class="status-pill">
+            <span>문제</span>
+            <strong id="round-count">1 / 10</strong>
+          </div>
+        </div>
+      </header>
+
+      <aside class="crew-panel" aria-label="탈출 멤버">
+        <span class="crew-label">탈출 멤버</span>
+        <div id="crew-list" class="crew-list"></div>
+      </aside>
+
+      <section class="teacher-sheet" aria-label="과학쌤 문제지">
+        <div class="sheet-pin"></div>
+        <div class="paper-head">
+          <span id="question-category">산과 염기</span>
+          <strong id="paper-stamp">문제지</strong>
+        </div>
+        <p id="question-text" class="question-text"></p>
+        <div id="choice-grid" class="choice-grid" aria-label="정답 선택"></div>
+        <div id="feedback" class="feedback"></div>
+      </section>
+
+      <div id="key-layer" class="key-layer" aria-label="숨겨진 열쇠 위치"></div>
+
+      <section class="key-rack" aria-label="모은 열쇠">
+        <div id="key-rack" class="key-dots"></div>
+      </section>
+    </section>
+
+    <section id="start-modal" class="modal start-modal">
+      <div class="modal-panel">
+        <span class="modal-kicker">과학쌤의 문제지가 펼쳐졌다</span>
+        <h2>과학쌤을 피해 열쇠 10개를 찾아라</h2>
+        <p>
+          예승, 리원, 지후, 성현은 리얼한 과학실에 갇혔다. 과학쌤은 무서운 표정으로 문제지를 들고 있고,
+          정답을 맞힐 때마다 숨겨 둔 열쇠 위치를 알려준다. 틀리면 오후 10시까지 이어지는 진실의 방 공부가
+          게임 속 10초 타이머로 시작된다.
+        </p>
+        <button id="start-button" class="primary-button" type="button">탈출 시작</button>
+      </div>
+    </section>
+
+    <section id="truth-modal" class="modal truth-modal" hidden>
+      <div class="modal-panel truth-panel">
+        <span class="modal-kicker">진실의 방</span>
+        <h2 id="truth-title">오답 공부 시간</h2>
+        <p id="truth-message"></p>
+        <div class="study-box">
+          <span>정답</span>
+          <strong id="truth-answer"></strong>
+          <p id="study-note"></p>
+        </div>
+        <div class="timer-wrap">
+          <div class="timer-top">
+            <span>남은 공부 시간</span>
+            <strong id="study-seconds">10초</strong>
+          </div>
+          <div class="timer-track">
+            <div id="timer-bar" class="timer-bar"></div>
+          </div>
+        </div>
+        <button id="study-done-button" class="primary-button ghost" type="button" disabled>공부 중</button>
+      </div>
+    </section>
+
+    <section id="win-modal" class="modal win-modal" hidden>
+      <div class="modal-panel">
+        <span class="modal-kicker">탈출 성공</span>
+        <h2>과학실 문이 열렸다</h2>
+        <p id="win-summary"></p>
+        <button id="restart-button" class="primary-button" type="button">다시 도전</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

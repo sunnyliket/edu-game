@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과학RPG - 손로란트</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+    <section id="startScreen" class="screen screen-active">
+      <div class="start-stage">
+        <p class="rating">전체이용가</p>
+        <h1>과학RPG</h1>
+        <p class="subtitle">손로란트</p>
+        <button id="playButton" class="primary-button">PLAY</button>
+        <p class="credits">강규빈 · 김도빈 · 전승민 · 전찬영</p>
+      </div>
+    </section>
+
+    <section id="selectScreen" class="screen">
+      <div class="select-shell">
+        <div class="select-header">
+          <span id="stageBadge" class="stage-badge">STAGE 1</span>
+          <h2 id="selectTitle">캐릭터 선택</h2>
+        </div>
+        <div id="characterGrid" class="character-grid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="game-screen" aria-live="polite">
+      <header class="hud">
+        <div>
+          <p class="hud-label">과학RPG</p>
+          <strong id="stageName">STAGE 1</strong>
+        </div>
+        <div class="meter-block">
+          <span>체력</span>
+          <div class="meter"><i id="playerHealthBar"></i></div>
+          <b id="playerHealthText">100</b>
+        </div>
+        <div class="ammo-block">
+          <span>탄환</span>
+          <b id="ammoText">25 / 5</b>
+        </div>
+      </header>
+
+      <div id="scene" class="scene">
+        <div id="worldOffset" class="world-offset">
+          <div class="skyline"></div>
+          <div class="arena-floor"></div>
+        </div>
+        <div id="monster" class="monster monster-water">
+          <div class="monster-shadow"></div>
+          <div class="monster-body">
+            <span class="monster-eye left-eye"></span>
+            <span class="monster-eye right-eye"></span>
+            <span class="monster-mouth"></span>
+          </div>
+        </div>
+        <div class="boss-board">
+          <span id="monsterName">물 좀비</span>
+          <div class="meter monster-meter"><i id="monsterHealthBar"></i></div>
+          <small id="weaknessText">약점: 얼음</small>
+        </div>
+        <div id="crosshair" class="crosshair" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div id="weapon" class="water-rifle" aria-hidden="true">
+          <div class="rifle-stock"></div>
+          <div class="rifle-core"></div>
+          <div class="rifle-tank"></div>
+          <div class="rifle-barrel"></div>
+          <div class="rifle-grip"></div>
+          <div class="rifle-trigger"></div>
+          <div class="rifle-water"></div>
+        </div>
+        <div id="hitFlash" class="hit-flash"></div>
+      </div>
+
+      <footer class="control-deck">
+        <div class="movement-pad">
+          <button class="mini-button" data-move="forward">W</button>
+          <button class="mini-button" data-move="left">A</button>
+          <button class="mini-button" data-move="back">S</button>
+          <button class="mini-button" data-move="right">D</button>
+        </div>
+        <div class="action-pad">
+          <button id="fireButton" class="action-button fire-button">발사</button>
+          <button id="aimButton" class="action-button">조준</button>
+          <button id="reloadButton" class="action-button">장전</button>
+        </div>
+        <div class="skill-pad">
+          <button class="skill-button" data-skill="e"><b>E</b><span>산과 염기</span></button>
+          <button class="skill-button" data-skill="z"><b>Z</b><span>물체 운동</span></button>
+          <button class="skill-button" data-skill="x"><b>X</b><span>식물 구조</span></button>
+          <button class="skill-button ultimate" data-skill="c"><b>C</b><span>지구 운동</span></button>
+        </div>
+      </footer>
+
+      <aside id="combatLog" class="combat-log">PLAY를 눌러 시작하세요.</aside>
+    </section>
+
+    <section id="questionModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionTitle">
+      <div class="modal-panel">
+        <span id="questionCategory" class="stage-badge">과학 문제</span>
+        <h2 id="questionTitle">문제</h2>
+        <div id="answerList" class="answer-list"></div>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="screen">
+      <div class="result-shell">
+        <span class="stage-badge">CLEAR</span>
+        <h2 id="resultTitle">수행평가 만점!</h2>
+        <p id="resultText">모든 스테이지를 완료했습니다.</p>
+        <button id="restartButton" class="primary-button">다시 시작</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>

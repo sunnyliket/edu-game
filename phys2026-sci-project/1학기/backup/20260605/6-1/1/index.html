@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="과학실 탈출 - 6학년 1학기 과학 방탈출 게임">
+  <title>🔬 과학실 탈출 - 방탈출 게임</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Creepster&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-container">
+
+    <!-- ===== TITLE SCREEN ===== -->
+    <div id="title-screen" class="screen active">
+      <div class="flicker-overlay"></div>
+      <div class="dust-particles" id="title-dust"></div>
+      <div class="title-content">
+        <div class="title-icon">🔬</div>
+        <h1 class="title-text">과학실 탈출</h1>
+        <p class="title-sub">6학년 1학기 과학 · 방탈출 게임</p>
+        <div class="title-desc">
+          <p>으스스한 과학실에 갇혔다...</p>
+          <p>숨겨진 문제를 찾아 풀고 탈출하라!</p>
+        </div>
+        <button id="start-btn" class="glow-btn" onclick="startGame()">
+          <span>🚪 게임 시작</span>
+        </button>
+        <div class="controls-hint">
+          <span>⬅️➡️ 이동</span>
+          <span>⬆️ 조사하기</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== INTRO CUTSCENE ===== -->
+    <div id="intro-screen" class="screen">
+      <div class="intro-overlay"></div>
+      <div class="intro-text-box" id="intro-text-box">
+        <p id="intro-text"></p>
+        <span class="intro-continue">▼ 아무 키나 누르세요</span>
+      </div>
+    </div>
+
+    <!-- ===== GAME SCREEN ===== -->
+    <div id="game-screen" class="screen">
+      <!-- HUD -->
+      <div id="hud">
+        <div class="hud-left">
+          <div class="hud-room" id="hud-room">1단원: 산과 염기</div>
+        </div>
+        <div class="hud-center">
+          <div class="hud-progress" id="hud-progress">
+            <span class="progress-icon">🔍</span>
+            <span id="hud-found">0</span> / <span id="hud-total">3</span> 문제 해결
+          </div>
+        </div>
+        <div class="hud-right">
+          <div class="hud-room-indicator" id="hud-rooms">
+            <span class="room-dot active" data-room="0"></span>
+            <span class="room-dot" data-room="1"></span>
+            <span class="room-dot" data-room="2"></span>
+            <span class="room-dot" data-room="3"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Room Container -->
+      <div id="room-container">
+        <div class="room-lighting" id="room-lighting"></div>
+        <div class="room-scanlines"></div>
+        <div id="room-bg" class="room-background"></div>
+
+        <!-- Room Objects Layer -->
+        <div id="room-objects"></div>
+
+        <!-- Player Character -->
+        <div id="player">
+          <div class="player-body">
+            <div class="player-head">
+              <div class="player-eye left"></div>
+              <div class="player-eye right"></div>
+            </div>
+            <div class="player-torso">
+              <div class="player-coat"></div>
+            </div>
+            <div class="player-legs">
+              <div class="player-leg left"></div>
+              <div class="player-leg right"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interaction Prompt -->
+        <div id="interact-prompt" class="hidden">
+          <span class="prompt-key">⬆️</span>
+          <span class="prompt-text">조사하기</span>
+        </div>
+
+        <!-- Dust Particles -->
+        <div class="dust-particles" id="game-dust"></div>
+      </div>
+
+      <!-- Room Transition Overlay -->
+      <div id="room-transition" class="hidden">
+        <div class="transition-text" id="transition-text"></div>
+      </div>
+    </div>
+
+    <!-- ===== QUIZ MODAL ===== -->
+    <div id="quiz-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content quiz-content">
+        <div class="quiz-header">
+          <span class="quiz-icon" id="quiz-icon">🧪</span>
+          <h2 class="quiz-title" id="quiz-title">문제</h2>
+        </div>
+        <p class="quiz-question" id="quiz-question"></p>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-result hidden" id="quiz-result">
+          <div class="result-icon" id="result-icon"></div>
+          <p class="result-text" id="result-text"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DESCRIPTION MODAL ===== -->
+    <div id="desc-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content desc-content">
+        <div class="desc-icon" id="desc-icon">📋</div>
+        <p class="desc-text" id="desc-text"></p>
+        <span class="desc-close">아무 키나 눌러 닫기</span>
+      </div>
+    </div>
+
+    <!-- ===== VICTORY SCREEN ===== -->
+    <div id="victory-screen" class="screen">
+      <div class="victory-particles" id="victory-particles"></div>
+      <div class="victory-content">
+        <div class="victory-icon">🎉</div>
+        <h1 class="victory-title">탈출 성공!</h1>
+        <p class="victory-sub">모든 과학 문제를 풀고 과학실에서 탈출했습니다!</p>
+        <div class="victory-stats" id="victory-stats"></div>
+        <button class="glow-btn" onclick="restartGame()">
+          <span>🔄 다시 도전하기</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

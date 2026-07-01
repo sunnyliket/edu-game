@@ -1,0 +1,1035 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;700;900&display=swap');
+
+:root {
+  --bg-color: #0b0f19;
+  --panel-bg: rgba(15, 22, 42, 0.75);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  
+  /* Rarity Colors */
+  --rarity-rare: #3b82f6; /* Blue */
+  --rarity-epic: #a855f7; /* Purple */
+  --rarity-mythic: #f43f5e; /* Rose/Gold-ish */
+  --rarity-legendary: #fbbf24; /* Golden Yellow */
+  
+  /* Level Colors */
+  --lvl-1: #10b981; /* Green */
+  --lvl-2: #3b82f6; /* Blue */
+  --lvl-3: #8b5cf6; /* Purple */
+  --lvl-4: #f97316; /* Orange */
+  --lvl-5: #ef4444; /* Red */
+  
+  --shadow-neon: 0 0 15px rgba(59, 130, 246, 0.4);
+  --shadow-gold: 0 0 20px rgba(251, 191, 36, 0.6);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+body {
+  font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  overflow: hidden;
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
+  width: 100vw;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+/* 메인 게임 컨테이너 */
+#app-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
+  background-color: #121824;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
+  display: flex;
+}
+
+/* 메인 뷰포트 */
+#game-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #182232;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: #1a2333;
+}
+
+/* --- ROBLOX STYLE HUD & UI OVERLAYS --- */
+
+/* 1. 화면 중앙 위: RNG 주사위 */
+.roblox-hud-top-center {
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.roblox-dice-logo {
+  height: 72px;
+  width: auto;
+  cursor: pointer;
+  filter: drop-shadow(0 8px 16px rgba(2, 6, 23, 0.42)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.28));
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: diceFloat 3s ease-in-out infinite alternate;
+}
+
+.roblox-dice-logo:hover {
+  transform: scale(1.15) rotate(5deg);
+}
+
+@keyframes diceFloat {
+  0% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-6px) rotate(4deg); }
+  100% { transform: translateY(0) rotate(-2deg); }
+}
+
+/* 2. 화면 좌측 아래: 체력 & 코인 */
+.roblox-hud-bottom-left {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.roblox-hud-row {
+  display: flex;
+  align-items: center;
+}
+
+/* 좌측 사각 아이콘 컨테이너 */
+.roblox-heart-container, .roblox-coin-container {
+  width: 40px;
+  height: 40px;
+  background: rgba(22, 22, 22, 0.95);
+  border: 3px solid #000000;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  position: relative;
+  margin-right: -10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.roblox-heart-svg {
+  width: 24px;
+  height: 24px;
+  fill: #ff4b4b;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+}
+
+.roblox-coin-symbol {
+  font-size: 1.3rem;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+}
+
+/* 우측 바형 컨테이너 */
+.roblox-bar-container {
+  height: 34px;
+  background: rgba(15, 15, 15, 0.9);
+  border: 3px solid #000000;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding-left: 15px;
+  z-index: 1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.health-border {
+  width: 175px;
+}
+
+.coin-border {
+  width: 145px;
+}
+
+/* 체력 바 게이지 충전부 */
+.roblox-health-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(180deg, #ff4b4b, #cc2424);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 텍스트 아웃라인 기법 적용 */
+.roblox-bar-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  left: 0;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 0.85rem;
+  text-shadow: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000;
+  z-index: 3;
+}
+
+.roblox-coin-text {
+  color: #fbbf24;
+  font-weight: 900;
+  font-size: 1.05rem;
+  padding-right: 28px;
+  text-shadow: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000;
+  z-index: 3;
+}
+
+/* 코인 충전 플러스 버튼 */
+.roblox-plus-btn {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #16a34a;
+  border: 1.5px solid #000;
+  border-radius: 4px;
+  color: #ffffff;
+  width: 22px;
+  height: 22px;
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+  transition: all 0.1s;
+}
+
+.roblox-plus-btn:hover {
+  background: #15803d;
+  transform: translateY(-50%) scale(1.08);
+}
+
+/* 3. 화면 가운데 아래: 인벤토리 배낭 */
+.roblox-hud-bottom-center {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.roblox-inventory-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.roblox-inventory-btn:hover {
+  transform: scale(1.12);
+}
+
+.roblox-backpack-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(22, 22, 22, 0.95);
+  border: 3px solid #000000;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.4);
+}
+
+.roblox-backpack-icon svg {
+  width: 32px;
+  height: 32px;
+  fill: #c2410c; /* 갈색 가죽 가방 */
+  stroke: #000000;
+  stroke-width: 1.5px;
+}
+
+.roblox-inventory-label {
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.78rem;
+  text-shadow: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000;
+}
+
+/* 4. 화면 우측 위: 콤팩트 패널 */
+.roblox-hud-top-right {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.roblox-compact-panel {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  font-size: 0.8rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.35);
+  transition: border-color 0.2s;
+}
+
+.roblox-icon-btn {
+  min-width: 34px;
+  min-height: 34px;
+  justify-content: center;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.roblox-icon-btn.muted {
+  border-color: rgba(239, 68, 68, 0.55);
+  background: rgba(127, 29, 29, 0.85);
+}
+
+.roblox-compact-panel:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* --- 상호작용 가능한 화면 오버레이 --- */
+.overlay-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(7, 10, 18, 0.85);
+  backdrop-filter: blur(15px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.overlay-screen.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: rgba(17, 24, 39, 0.95);
+  border: 2px solid var(--panel-border);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+  border-radius: 24px;
+  width: 500px;
+  padding: 30px;
+  text-align: center;
+  position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.overlay-screen.active .modal-content {
+  transform: scale(1);
+}
+
+/* 닫기 버튼 */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: var(--text-main);
+}
+
+/* --- RNG 뽑기 화면 --- */
+.gacha-modal {
+  width: min(680px, 92vw);
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(17, 24, 39, 0.95)),
+    radial-gradient(circle at 20% 0%, rgba(96, 165, 250, 0.24), transparent 34%),
+    radial-gradient(circle at 90% 20%, rgba(251, 191, 36, 0.16), transparent 28%);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  box-shadow:
+    0 26px 70px rgba(0, 0, 0, 0.68),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.gacha-modal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent),
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 7px);
+  pointer-events: none;
+}
+
+.gacha-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+  text-align: left;
+  position: relative;
+  z-index: 1;
+}
+
+.gacha-core {
+  width: 76px;
+  height: 76px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 2.2rem;
+  font-weight: 900;
+  background:
+    linear-gradient(145deg, rgba(96, 165, 250, 0.35), rgba(168, 85, 247, 0.18)),
+    #0f172a;
+  border: 1px solid rgba(191, 219, 254, 0.45);
+  box-shadow:
+    0 0 26px rgba(96, 165, 250, 0.32),
+    inset 0 0 22px rgba(255, 255, 255, 0.08);
+  transform: rotate(-4deg);
+}
+
+.gacha-core span {
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.72);
+  animation: corePulse 1.8s ease-in-out infinite alternate;
+}
+
+.gacha-heading {
+  min-width: 0;
+}
+
+.gacha-kicker {
+  color: #93c5fd;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  margin-bottom: 4px;
+}
+
+.gacha-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #e0f2fe, #93c5fd 42%, #fef3c7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gacha-subtitle {
+  color: #cbd5e1;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.gacha-tier-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 14px 0 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.tier-chip {
+  min-height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.76rem;
+  font-weight: 900;
+  box-shadow: inset 0 -8px 14px rgba(0, 0, 0, 0.18);
+}
+
+.spinner-shell {
+  position: relative;
+  margin: 18px 0 22px;
+  padding: 14px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.84), rgba(2, 6, 23, 0.96)),
+    radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.18), transparent 45%);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 16px 34px rgba(0, 0, 0, 0.36);
+}
+
+.spinner-glass {
+  position: absolute;
+  inset: 9px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* 스피너 레이아웃 */
+.spinner-container {
+  position: relative;
+  width: 100%;
+  height: 118px;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(15, 23, 42, 0.62)),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.72), transparent 18%, transparent 82%, rgba(15, 23, 42, 0.72));
+  border-radius: 13px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.42);
+}
+
+.spinner-pointer {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  bottom: 8px;
+  width: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, transparent, #fbbf24 20%, #ffffff 50%, #fbbf24 80%, transparent);
+  z-index: 10;
+  box-shadow: 0 0 18px #fbbf24, 0 0 34px rgba(251, 191, 36, 0.38);
+  transform: translateX(-50%);
+}
+
+.spinner-pointer::before,
+.spinner-pointer::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 12px;
+  background: #fbbf24;
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+}
+
+.spinner-pointer::before {
+  top: -4px;
+}
+
+.spinner-pointer::after {
+  bottom: -4px;
+  transform: translateX(-50%) rotate(180deg);
+}
+
+.spinner-track {
+  display: flex;
+  position: absolute;
+  left: 0;
+  white-space: nowrap;
+  height: 100%;
+  align-items: center;
+  transition: transform 3.5s cubic-bezier(0.1, 0.8, 0.1, 1);
+}
+
+.spinner-item {
+  width: 94px;
+  height: 88px;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 800;
+  border-radius: 12px;
+  margin: 0 5px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -18px 22px rgba(0, 0, 0, 0.2),
+    0 10px 20px rgba(0, 0, 0, 0.26);
+  font-size: 1.1rem;
+  transform: perspective(600px) rotateX(3deg);
+}
+
+.spinner-level {
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+}
+
+.spinner-reward {
+  margin-top: 5px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  opacity: 0.92;
+}
+
+.spinner-readout {
+  display: flex;
+  justify-content: space-between;
+  color: #64748b;
+  font-size: 0.67rem;
+  font-weight: 800;
+  padding: 10px 6px 0;
+}
+
+/* 난이도 색상 바인딩 */
+.lvl-item-1 { background: linear-gradient(145deg, #34d399, var(--lvl-1)); color: #fff; }
+.lvl-item-2 { background: linear-gradient(145deg, #60a5fa, var(--lvl-2)); color: #fff; }
+.lvl-item-3 { background: linear-gradient(145deg, #c084fc, var(--lvl-3)); color: #fff; }
+.lvl-item-4 { background: linear-gradient(145deg, #fb923c, var(--lvl-4)); color: #fff; }
+.lvl-item-5 { background: linear-gradient(145deg, #fb7185, var(--lvl-5)); color: #fff; }
+
+.gacha-action-btn {
+  background: linear-gradient(135deg, #2563eb, #7c3aed 48%, #f59e0b);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: white;
+  padding: 12px 35px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow:
+    0 10px 26px rgba(59, 130, 246, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: all 0.2s ease;
+}
+
+.gacha-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+}
+
+.gacha-action-btn:active {
+  transform: translateY(1px);
+}
+
+.gacha-action-btn:disabled {
+  background: #334155;
+  color: #64748b;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+@keyframes corePulse {
+  from { transform: scale(0.96); opacity: 0.78; }
+  to { transform: scale(1.04); opacity: 1; }
+}
+
+/* --- 퀴즈 모달 --- */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.quiz-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.quiz-unit {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.quiz-question {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.6;
+  margin: 30px 0;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-options {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.option-btn {
+  width: 100px;
+  height: 100px;
+  font-size: 3rem;
+  font-weight: 900;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.option-btn.o-btn {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.option-btn.o-btn:hover {
+  background: #10b981;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+.option-btn.x-btn {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.option-btn.x-btn:hover {
+  background: #ef4444;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+}
+
+/* 퀴즈 결과 화면 */
+.quiz-result-view {
+  display: none;
+  animation: fadeIn 0.3s forwards;
+}
+
+.result-icon {
+  font-size: 4rem;
+  margin-bottom: 15px;
+}
+
+.result-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.result-explanation {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 15px 0 25px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- 상점 무기 뽑기 화면 --- */
+.shop-item-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.shop-cost {
+  font-size: 1.1rem;
+  color: #fbbf24;
+  font-weight: 700;
+  margin: 10px 0 20px;
+}
+
+.weapon-draw-display {
+  display: none;
+  margin: 20px 0;
+  animation: popScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.drawn-weapon-rarity {
+  font-size: 0.9rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.drawn-weapon-name {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin-bottom: 15px;
+}
+
+.drawn-weapon-stats {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 250px;
+  margin: 0 auto;
+}
+
+/* 희귀도 태그 스타일 */
+.rarity-rare { background-color: rgba(59, 130, 246, 0.2); color: var(--rarity-rare); border: 1px solid var(--rarity-rare); }
+.rarity-epic { background-color: rgba(168, 85, 247, 0.2); color: var(--rarity-epic); border: 1px solid var(--rarity-epic); }
+.rarity-mythic { background-color: rgba(244, 63, 94, 0.2); color: var(--rarity-mythic); border: 1px solid var(--rarity-mythic); }
+.rarity-legendary { background-color: rgba(251, 191, 36, 0.2); color: var(--rarity-legendary); border: 1px solid var(--rarity-legendary); box-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
+
+/* --- 도움말 / 조작 안내 --- */
+.help-content {
+  text-align: left;
+  line-height: 1.6;
+}
+
+.help-section {
+  margin-bottom: 15px;
+}
+
+.help-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #60a5fa;
+  margin-bottom: 5px;
+}
+
+.help-keys {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+kbd {
+  background: #334155;
+  border-radius: 4px;
+  border: 1px solid #475569;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: white;
+}
+
+/* --- 알림 배너 --- */
+#toast-notification {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 200;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#toast-notification.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* --- 상호작용 가이드 (근접 상호작용 팝업) --- */
+#interaction-hint {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid #fbbf24;
+  color: #fbbf24;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+#interaction-hint.show {
+  opacity: 1;
+}
+
+/* --- 애니메이션 정의 --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popScale {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.rarity-glow-rare { text-shadow: 0 0 8px rgba(59, 130, 246, 0.6); }
+.rarity-glow-epic { text-shadow: 0 0 10px rgba(168, 85, 247, 0.6); }
+.rarity-glow-mythic { text-shadow: 0 0 12px rgba(244, 63, 94, 0.6); }
+.rarity-glow-legendary { text-shadow: 0 0 15px rgba(251, 191, 36, 0.8); animation: goldPulse 2s infinite alternate; }
+
+@keyframes goldPulse {
+  0% { text-shadow: 0 0 10px rgba(251, 191, 36, 0.6); }
+  100% { text-shadow: 0 0 20px rgba(251, 191, 36, 0.9), 0 0 30px rgba(251, 191, 36, 0.4); }
+}
+
+/* 모바일/단독 컴팩트 HUD (무기 보관함 보기) */
+.inventory-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.inventory-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.inventory-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.inventory-item.active {
+  border-color: #fbbf24;
+  background: rgba(251, 191, 36, 0.05);
+}
+
+@media (max-width: 760px), (max-height: 560px) {
+  .roblox-hud-top-center {
+    top: 10px;
+  }
+
+  .roblox-dice-logo {
+    height: 48px;
+  }
+
+  .roblox-hud-top-right {
+    top: 8px;
+    right: 8px;
+    gap: 6px;
+    max-width: calc(100vw - 16px);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .roblox-compact-panel {
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
+
+  #weapon-indicator {
+    max-width: 46vw;
+    overflow: hidden;
+  }
+
+  #weapon-name {
+    max-width: 25vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .roblox-hud-bottom-left {
+    left: 10px;
+    bottom: 10px;
+    transform: scale(0.86);
+    transform-origin: bottom left;
+  }
+
+  .roblox-hud-bottom-center {
+    bottom: 8px;
+    transform: translateX(-50%) scale(0.86);
+    transform-origin: bottom center;
+  }
+
+  .modal-content {
+    width: min(92vw, 500px);
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    padding: 22px;
+  }
+
+  .quiz-options {
+    gap: 16px;
+  }
+
+  .option-btn {
+    width: 82px;
+    height: 82px;
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #zone-indicator {
+    display: none;
+  }
+
+  #weapon-indicator {
+    max-width: 58vw;
+  }
+
+  #weapon-name {
+    max-width: 34vw;
+  }
+}

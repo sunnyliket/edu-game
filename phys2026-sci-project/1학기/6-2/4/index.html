@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과학실 탈출</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="game-shell" aria-live="polite">
+    <section class="lab-stage" aria-label="과학실 탈출 게임 화면">
+      <div class="pan-world">
+        <div class="atmosphere"></div>
+        <div class="lab-depth-layer" aria-hidden="true">
+          <div class="depth-shelf depth-shelf-left"></div>
+          <div class="depth-shelf depth-shelf-right"></div>
+          <div class="depth-floor"></div>
+          <div class="depth-bench depth-bench-left"></div>
+          <div class="depth-bench depth-bench-right"></div>
+          <div class="depth-light"></div>
+        </div>
+        <svg class="maze-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <path class="maze-wall" d="M4 65 H17 V54 H29 V63 H40 V51 H53 V60 H64 V47 H77 V57 H94" />
+          <path class="maze-wall" d="M7 80 H22 V70 H34 V77 H48 V66 H61 V74 H76 V63 H91" />
+          <path class="maze-wall" d="M13 88 V83 H29 V72 H43 V82 H58 V69 H71 V78 H86 V70" />
+          <path class="maze-route" d="M6 85 H20 V73 H33 V80 H47 V69 H60 V76 H74 V65 H90" />
+          <path class="maze-route secondary" d="M10 61 H24 V56 H37 V64 H48 V53 H61 V61 H72 V51 H89" />
+          <path class="maze-route tertiary" d="M17 90 V85 H31 V75 H44 V84 H59 V72 H70 V81 H84 V74" />
+        </svg>
+      </div>
+
+      <header class="hud" aria-label="게임 상태">
+        <div class="title-lockup">
+          <span class="eyebrow">Science Lab Escape</span>
+          <h1>과학실 탈출</h1>
+        </div>
+        <div class="status-strip">
+          <div class="status-pill">
+            <span>스테이지</span>
+            <strong id="stage-count">1 / 4</strong>
+          </div>
+          <div class="status-pill">
+            <span>열쇠</span>
+            <strong id="key-count">0 / 10</strong>
+          </div>
+          <div class="status-pill warning">
+            <span>진실의 방</span>
+            <strong id="truth-count">0회</strong>
+          </div>
+          <div class="status-pill">
+            <span>문제</span>
+            <strong id="round-count">1 / 10</strong>
+          </div>
+        </div>
+      </header>
+
+      <aside class="crew-panel" aria-label="탈출 멤버">
+        <span class="crew-label">함께 문제 풀이</span>
+        <div id="crew-list" class="crew-list"></div>
+      </aside>
+
+      <section class="teacher-sheet" aria-label="과학쌤 문제지">
+        <div class="sheet-pin"></div>
+        <div class="paper-head">
+          <span id="question-category">산과 염기</span>
+          <strong id="paper-stamp">문제지</strong>
+        </div>
+        <p id="question-text" class="question-text"></p>
+        <div id="choice-grid" class="choice-grid" aria-label="정답 선택"></div>
+        <div id="feedback" class="feedback"></div>
+      </section>
+
+      <div id="key-layer" class="key-layer" aria-label="숨겨진 열쇠 위치"></div>
+
+      <section class="key-rack" aria-label="모은 열쇠">
+        <div id="key-rack" class="key-dots"></div>
+      </section>
+    </section>
+
+    <section id="start-modal" class="modal start-modal">
+      <div class="modal-panel">
+        <span class="modal-kicker">과학쌤의 문제지가 펼쳐졌다</span>
+        <h2>과학쌤을 피해 열쇠 10개를 찾아라</h2>
+        <p>
+          과학실에 갇혔다. 나갈 방법은 단 하나, 예승, 리원, 지후, 성현이 함께 과학 문제를 풀고
+          열쇠 위치를 알아내는 것이다. 열쇠를 찾고 문을 열면 탈출 성공. 틀리면 모두 함께 진실의 방에서
+          정답 해설을 확인한 뒤 스페이스키를 눌러 다시 문제에 도전한다.
+        </p>
+        <button id="start-button" class="primary-button" type="button">탈출 시작</button>
+      </div>
+    </section>
+
+    <section id="truth-modal" class="modal truth-modal" hidden>
+      <div class="modal-panel truth-panel">
+        <span class="modal-kicker">진실의 방</span>
+        <h2 id="truth-title">오답 공부 시간</h2>
+        <p id="truth-message"></p>
+        <div class="study-box">
+          <span>정답</span>
+          <strong id="truth-answer"></strong>
+          <p id="study-note"></p>
+        </div>
+        <div class="timer-wrap">
+          <div class="timer-top">
+            <span>다음 진행</span>
+            <strong id="study-seconds">Space</strong>
+          </div>
+          <div class="timer-track">
+            <div id="timer-bar" class="timer-bar"></div>
+          </div>
+        </div>
+        <button id="study-done-button" class="primary-button ghost" type="button">문제풀이 복귀</button>
+      </div>
+    </section>
+
+    <section id="stage-clear-modal" class="modal stage-clear-modal" hidden>
+      <div class="modal-panel stage-clear-panel">
+        <span class="modal-kicker">Stage Clear</span>
+        <h2 id="stage-clear-title">스테이지 1 완료!</h2>
+        <p id="stage-clear-message">
+          예승, 리원, 지후, 성현이 힘을 합쳐 이번 스테이지의 열쇠 10개를 모두 찾았습니다. 다음 스테이지는 더욱 까다로운 문제가 출제됩니다!
+        </p>
+        <div class="study-box stage-clear-box">
+          <span>스테이지 요약</span>
+          <strong id="stage-clear-summary">이번 스테이지에서 진실의 방에 0번 다녀왔습니다.</strong>
+        </div>
+        <button id="next-stage-button" class="primary-button" type="button">다음 스테이지 시작</button>
+      </div>
+    </section>
+
+    <section id="win-modal" class="modal win-modal" hidden>
+      <div class="modal-panel">
+        <span class="modal-kicker">탈출 성공</span>
+        <h2>과학실 문이 열렸다</h2>
+        <p id="win-summary"></p>
+        <button id="restart-button" class="primary-button" type="button">다시 도전</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

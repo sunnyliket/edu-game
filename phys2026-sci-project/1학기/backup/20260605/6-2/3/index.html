@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>학교 탈출 3D 과학 퀴즈</title>
+  <meta name="description" content="유령이 나타나는 학교에서 탈출하세요! 4단원의 과학 퀴즈를 모두 해결하고 열쇠를 얻어야 합니다.">
+  <link rel="stylesheet" href="style.css">
+  <!-- Load Three.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body id="game-body">
+
+  <!-- 3D WebGL Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- Damage Screen Flash Overlay -->
+  <div id="damage-flash"></div>
+  <div id="flashlight-vignette"></div>
+
+  <!-- Start Screen Overlay -->
+  <div id="start-screen" class="overlay-screen">
+    <div class="glass-panel">
+      <h1>SCHOOL ESCAPE</h1>
+      <p class="subtitle">3D 과학 퀴즈 학교 탈출 게임</p>
+      
+      <div class="instructions-card">
+        <h3>게임 방법 & 규칙</h3>
+        <ul>
+          <li><strong>학교 탈출</strong>: 1단원 교실에서 시작해 첫 단서를 찾고, 4개의 교실 퀴즈와 특별실 퍼즐을 해결해야 합니다.</li>
+          <li><strong>하트 시스템</strong>: 기본 하트는 <strong>5개</strong>가 주어집니다.</li>
+          <li><strong>위험 요소</strong>: 퀴즈 문제를 틀리거나 배회하는 유령 선생님에게 닿으면 하트가 1개씩 깎입니다.</li>
+          <li><strong>특별실</strong>: 보건실은 하트를 1번 회복하고, 음악실/과학실/교무실은 뒷문 탈출에 필요한 아이템을 줍니다.</li>
+          <li><strong>손전등</strong>: 시작할 때 손전등을 들고 있으며, 유령 선생님이 가까워지면 시야가 좁아집니다.</li>
+          <li><strong>컨트롤</strong>: 
+            <ul>
+              <li><strong>WASD</strong>: 이동 (앞/왼쪽/뒤/오른쪽)</li>
+              <li><strong>Shift</strong>: 달리기 (스태미나가 떨어지면 자동으로 걷습니다)</li>
+              <li><strong>마우스 드래그 / 화면 드래그</strong>: 시점 전환 (또는 Q, E 키로 좌우 회전)</li>
+            </ul>
+          </li>
+          <li><strong>최종 탈출</strong>: 4단원 클리어와 마스터키 조각을 모두 갖춘 뒤 뒷문 문제를 풀면 탈출 열쇠를 얻습니다.</li>
+        </ul>
+      </div>
+
+      <button id="start-btn" class="btn-primary">게임 시작하기</button>
+    </div>
+  </div>
+
+  <!-- HUD Overlay (Visible during play) -->
+  <div id="hud" class="hidden">
+    <div class="hud-top">
+      <div class="hud-left-stack">
+        <!-- Heart display -->
+        <div class="hud-hearts-container" id="hearts-container">
+          <span class="hud-heart" data-index="0">♥</span>
+          <span class="hud-heart" data-index="1">♥</span>
+          <span class="hud-heart" data-index="2">♥</span>
+          <span class="hud-heart" data-index="3">♥</span>
+          <span class="hud-heart" data-index="4">♥</span>
+        </div>
+
+        <div class="hud-status-panel">
+          <div class="meter-row">
+            <span>STAMINA</span>
+            <div class="meter-track"><div id="stamina-fill" class="meter-fill"></div></div>
+            <strong id="stamina-text">100%</strong>
+          </div>
+          <div class="meter-row">
+            <span>LIGHT</span>
+            <div class="meter-track flashlight-track"><div id="flashlight-fill" class="meter-fill"></div></div>
+            <strong id="flashlight-text">안정</strong>
+          </div>
+        </div>
+
+        <div class="hud-inventory-panel">
+          <h4>인벤토리</h4>
+          <div class="inventory-grid">
+            <div class="inventory-item" id="inv-clue">단서</div>
+            <div class="inventory-item" id="inv-medkit">구급</div>
+            <div class="inventory-item" id="inv-music-key">음악키</div>
+            <div class="inventory-item" id="inv-fuse">퓨즈</div>
+            <div class="inventory-item" id="inv-master-key">마스터</div>
+            <div class="inventory-item" id="inv-checkpoint">세이브</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unit Clearance checklist -->
+      <div class="hud-progress-panel">
+        <h4>단원 진행도</h4>
+        <div class="checklist-item" id="chk-unit1">
+          <span class="checklist-icon">⬜</span> 1단원: 산과 염기
+        </div>
+        <div class="checklist-item" id="chk-unit2">
+          <span class="checklist-icon">⬜</span> 2단원: 물체의 운동
+        </div>
+        <div class="checklist-item" id="chk-unit3">
+          <span class="checklist-icon">⬜</span> 3단원: 식물의 구조와 기능
+        </div>
+        <div class="checklist-item" id="chk-unit4">
+          <span class="checklist-icon">⬜</span> 4단원: 지구의 운동
+        </div>
+        <div class="checklist-item" id="chk-key" style="color: var(--accent-gold); display: none;">
+          <span class="checklist-icon">🔑</span> 탈출 열쇠 획득!
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Crosshair for FPS navigation -->
+    <div id="crosshair"></div>
+    <div id="threat-warning" class="hidden">
+      <strong>주의!</strong>
+      <span>유령 선생님이 가까워졌습니다. 피하세요!</span>
+    </div>
+
+    <!-- Mobile Virtual Controls (Show on touch devices or standard guide) -->
+    <div class="hud-bottom-instructions">
+      <div class="keys-guide">
+        이동: W, A, S, D | 달리기: Shift | 회전: 마우스 드래그 또는 Q, E 키
+      </div>
+    </div>
+
+    <!-- Virtual Joystick buttons for touch interface fallback / visual aid -->
+    <div id="virtual-controls">
+      <div class="joystick-row">
+        <div class="joy-btn" id="btn-forward">W</div>
+      </div>
+      <div class="joystick-row">
+        <div class="joy-btn" id="btn-left">A</div>
+        <div class="joy-btn" id="btn-back">S</div>
+        <div class="joy-btn" id="btn-right">D</div>
+      </div>
+    </div>
+
+    <div id="virtual-turn-controls">
+      <div class="joy-btn" id="btn-turn-left">Q</div>
+      <div class="joy-btn" id="btn-turn-right">E</div>
+    </div>
+  </div>
+
+  <!-- Quiz Screen Overlay -->
+  <div id="quiz-screen" class="overlay-screen hidden">
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <span class="quiz-unit-title" id="quiz-title">1단원: 산과 염기</span>
+        <span class="quiz-progress" id="quiz-progress-text">문제 1 / 4</span>
+      </div>
+      <div class="quiz-question" id="quiz-question-text">
+        페놀프탈레인 용액에 염기성 용액을 넣고 산성 용액을 계속 넣으면 어떻게 되나요?
+      </div>
+      <div class="quiz-options" id="quiz-options-container">
+        <!-- Dynamic choices will be populated here -->
+        <button class="quiz-option-btn">1. 염기성 용액이 점점 약해져 결국 산성 용액이 된다.</button>
+        <button class="quiz-option-btn">2. 색이 점점 붉게 변한다.</button>
+        <button class="quiz-option-btn">3. 아무런 변화가 일어나지 않는다.</button>
+        <button class="quiz-option-btn">4. 고체로 굳어 버린다.</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Get Toast Notification -->
+  <div id="key-get-toast">
+    <div class="key-toast-icon"></div>
+    <span>탈출 열쇠를 획득했습니다! 탈출구로 향하세요.</span>
+  </div>
+
+  <!-- Game Over Screen Overlay -->
+  <div id="gameover-screen" class="overlay-screen hidden">
+    <div class="glass-panel" style="box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 77, 109, 0.5);">
+      <h2>GAME OVER</h2>
+      <p class="subtitle" id="gameover-message">유령에게 하트를 모두 잃었습니다.</p>
+      <button id="restart-btn" class="btn-primary" style="background: linear-gradient(135deg, rgba(255, 77, 109, 0.8), rgba(186, 24, 60, 0.8)); box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);">다시 도전하기</button>
+    </div>
+  </div>
+
+  <!-- Victory Screen Overlay -->
+  <div id="victory-screen" class="overlay-screen hidden">
+    <div class="glass-panel" style="box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 183, 3, 0.5);">
+      <h2>ESCAPE SUCCESS!</h2>
+      <p class="subtitle">뒷문을 열고 으스스한 학교 탈출에 성공했습니다!</p>
+      
+      <div class="stats-container">
+        <p>탈출 소요 시간: <span id="stat-time">00:00</span></p>
+        <p>남은 하트 개수: <span id="stat-hearts">5 / 5</span></p>
+      </div>
+
+      <br>
+      <button id="victory-restart-btn" class="btn-primary" style="background: linear-gradient(135deg, rgba(255, 183, 3, 0.8), rgba(217, 119, 6, 0.8)); box-shadow: 0 4px 15px rgba(255, 183, 3, 0.3);">처음으로 돌아가기</button>
+    </div>
+  </div>
+
+  <!-- Game Script files -->
+  <script src="questions.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

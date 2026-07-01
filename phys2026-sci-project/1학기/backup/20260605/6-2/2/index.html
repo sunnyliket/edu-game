@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>판타지 숲속 과학 방탈출 - 6학년 과학 탐험</title>
+    <!-- 구글 폰트에서 모노스페이스 스타일 적용 및 네이버 둥근모 폰트 임포트 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 
+    판타지 숲속 과학 방탈출 게임 (픽셀 아트 테마)
+    -->
+    <div id="app" class="pixel-border">
+        <!-- 1. 캐릭터 커스터마이징 & 입장 화면 -->
+        <div id="characterScreen" class="screen active">
+            <div class="character-container pixel-box">
+                <div class="logo-area">
+                    <span class="pixel-icon leaf-icon">🍃</span>
+                    <h1>판타지 과학 방탈출</h1>
+                    <p class="subtitle">~ 6학년 1학기 과학 탐험 ~</p>
+                </div>
+                
+                <!-- 캐릭터 프리뷰 -->
+                <div class="character-display">
+                    <div id="characterPreview" class="pixel-avatar-box">
+                        <div class="pixel-char">
+                            <!-- 머리, 몸통, 신발 레이어 -->
+                            <div id="charPreviewHair" class="pixel-hair"></div>
+                            <div id="charPreviewBody" class="pixel-clothing"></div>
+                            <div id="charPreviewShoes" class="pixel-shoes"></div>
+                        </div>
+                    </div>
+                    <p class="character-name-label"><span class="player-name-display">플레이어</span></p>
+                </div>
+
+                <!-- 이름 입력 -->
+                <div class="input-group pixel-box-inner">
+                    <label>🌿 모험가의 이름</label>
+                    <input type="text" id="nameInput" placeholder="이름을 입력해 주세요" maxlength="8">
+                </div>
+
+                <div class="input-group pixel-box-inner">
+                    <label>🪪 고유 아이디 만들기</label>
+                    <input type="text" id="playerIdInput" placeholder="영문/숫자 3~12자, 중복 불가" maxlength="12">
+                    <p id="playerIdStatus" class="input-help">친구 추가와 거래에 쓰이는 나만의 아이디입니다.</p>
+                </div>
+
+                <div class="story-box pixel-box-inner">
+                    <p>당신은 알 수 없는 마법에 걸려 <strong>'판타지 과학의 숲'</strong>에 갇혔습니다.</p>
+                    <p>이곳을 탈출하려면 숲속 연구소의 <strong>33가지 과학 비밀</strong>을 밝혀내야 합니다.</p>
+                    <p>미션을 해결하여 얻은 포인트로 <strong>개인 섬과 집</strong>을 꾸미고 동물을 길러보세요!</p>
+                </div>
+
+                <button id="startBtn" class="pixel-btn btn-primary">숲속으로 들어가기 ➔</button>
+            </div>
+        </div>
+
+        <!-- 2. 메인 게임 플레이 화면 -->
+        <div id="gameScreen" class="screen">
+            <!-- HUD / 게임 정보 헤더 -->
+            <div class="game-header pixel-box">
+                <div class="hud-left">
+                    <div class="player-avatar-hud pixel-avatar-box-hud">
+                        <div class="pixel-char-hud">
+                            <div id="hudPreviewHair" class="pixel-hair-hud"></div>
+                            <div id="hudPreviewBody" class="pixel-clothing-hud"></div>
+                            <div id="hudPreviewShoes" class="pixel-shoes-hud"></div>
+                        </div>
+                    </div>
+                    <div class="player-text-hud">
+                        <p class="hud-name"><span class="player-name-display">플레이어</span></p>
+                        <p class="hud-id">ID: <span class="player-id-display">미등록</span></p>
+                        <p class="hud-stats">
+                            <span class="coin-icon">💎</span> 
+                            <strong class="player-points-display">0</strong> 포인트
+                        </p>
+                    </div>
+                </div>
+                <div class="hud-center">
+                    <p id="statSpeedBonus" class="stat-text">이동 속도 보너스: +0%</p>
+                    <p id="statPointBonus" class="stat-text">추가 포인트 획득: +0포인트</p>
+                </div>
+                <div class="hud-right">
+                    <button id="customizeBtn" class="pixel-btn btn-secondary small">닉네임 변경</button>
+                </div>
+            </div>
+
+            <!-- 메인 메뉴 탭 네비게이션 -->
+            <div class="menu-tabs">
+                <button id="tabEscape" class="tab-btn active pixel-btn-tab">🏰 과학 방탈출</button>
+                <button id="tabIsland" class="tab-btn pixel-btn-tab">🌳 나의 숲속 섬</button>
+                <button id="tabShop" class="tab-btn pixel-btn-tab">🧙 마법 상점</button>
+                <button id="tabSocial" class="tab-btn pixel-btn-tab">🤝 친구/거래</button>
+            </div>
+
+            <!-- 게임 메인 컨텐츠 영역 -->
+            <div class="game-content pixel-box-main">
+                
+                <!-- 탭 1: 과학 방탈출 씬 -->
+                <div id="roomScene" class="tab-scene active-scene">
+                    <!-- 스테이지 선택 뷰 -->
+                    <div id="stageSelectView" class="stage-select-view">
+                        <h2 class="section-title">🏰 과학 방탈출 구역</h2>
+                        <p class="section-desc">과제를 해결하고 연구소 밖으로 탈출하세요!</p>
+                        
+                        <div class="stage-cards">
+                            <!-- 스테이지 1 카드 -->
+                            <div class="stage-card pixel-box-inner" id="stageCard1">
+                                <div class="stage-icon">🧪</div>
+                                <h3>1구간: 산성과 염기성</h3>
+                                <p class="stage-info">신맛과 쓴맛, 지시약의 비밀을 밝혀내세요.</p>
+                                <div class="stage-progress">
+                                    <div class="progress-bar">
+                                        <div id="progressFill1" class="progress-fill"></div>
+                                    </div>
+                                    <p class="progress-text"><span id="completedCount1">0</span> / 20 완료</p>
+                                </div>
+                                <button class="pixel-btn btn-stage-enter" data-stage="1">연구소 입장하기</button>
+                            </div>
+                            
+                            <!-- 스테이지 2 카드 -->
+                            <div class="stage-card pixel-box-inner" id="stageCard2">
+                                <div class="stage-icon">🏃</div>
+                                <h3>2구간: 물체의 운동</h3>
+                                <p class="stage-info">위치의 변화, 속력과 안전 장치를 배웁니다.</p>
+                                <div class="stage-progress">
+                                    <div class="progress-bar">
+                                        <div id="progressFill2" class="progress-fill"></div>
+                                    </div>
+                                    <p class="progress-text"><span id="completedCount2">0</span> / 13 완료</p>
+                                </div>
+                                <button class="pixel-btn btn-stage-enter" data-stage="2">숲속 트랙 입장하기</button>
+                            </div>
+
+                            <div class="stage-card pixel-box-inner" id="stageCard3">
+                                <div class="stage-icon">🌿</div>
+                                <h3>3구간: 식물의 구조와 기능</h3>
+                                <p class="stage-info">뿌리, 줄기, 잎, 꽃의 역할을 탐험합니다.</p>
+                                <div class="stage-progress">
+                                    <div class="progress-bar">
+                                        <div id="progressFill3" class="progress-fill"></div>
+                                    </div>
+                                    <p class="progress-text"><span id="completedCount3">0</span> / 15 완료</p>
+                                </div>
+                                <button class="pixel-btn btn-stage-enter" data-stage="3">식물 온실 입장하기</button>
+                            </div>
+
+                            <div class="stage-card pixel-box-inner" id="stageCard4">
+                                <div class="stage-icon">🌎</div>
+                                <h3>4구간: 지구의 운동</h3>
+                                <p class="stage-info">자전과 공전, 낮과 밤의 비밀을 해결합니다.</p>
+                                <div class="stage-progress">
+                                    <div class="progress-bar">
+                                        <div id="progressFill4" class="progress-fill"></div>
+                                    </div>
+                                    <p class="progress-text"><span id="completedCount4">0</span> / 8 완료</p>
+                                </div>
+                                <button class="pixel-btn btn-stage-enter" data-stage="4">우주 관측소 입장하기</button>
+                            </div>
+                        </div>
+
+                        <div class="quick-action-row">
+                            <button id="goIslandBtn" class="pixel-btn btn-primary">섬으로 가기</button>
+                            <button id="goSocialBtn" class="pixel-btn btn-secondary">친구 집 가기</button>
+                        </div>
+                    </div>
+
+                    <!-- 개별 스테이지 미션 목록 뷰 (숨김 상태였다가 스크립트로 제어) -->
+                    <div id="stageMissionsView" class="stage-missions-view" style="display: none;">
+                        <div class="view-header">
+                            <button id="btnBackToStageSelect" class="pixel-btn btn-back">⬅ 뒤로 가기</button>
+                            <h3 id="currentStageTitle" class="stage-title">스테이지 타이틀</h3>
+                        </div>
+                        <p class="mission-guide">미션 아이콘을 클릭해 퀴즈를 해결하세요!</p>
+                        
+                        <div id="missionsList" class="missions-grid">
+                            <!-- 미션 아이템이 동적으로 추가됨 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 탭 2: 나의 숲속 섬 씬 -->
+                <div id="islandScene" class="tab-scene">
+                    <div class="island-view-container">
+                        <div class="island-sidebar pixel-box-inner">
+                            <h4>🌿 배치 가능한 아이템</h4>
+                            <p class="sidebar-info">상점에서 구매한 가구와 동물을 배치할 수 있습니다.</p>
+                            
+                            <!-- 배치 대기 인벤토리 목록 -->
+                            <div id="unplacedList" class="unplaced-items-list">
+                                <!-- 동적 추가 -->
+                                <p class="empty-notice">배치할 수 있는 아이템이 없습니다. 상점을 방문해 보세요!</p>
+                            </div>
+                        </div>
+
+                        <div class="island-main">
+                            <div class="island-header-info">
+                                <h3>🏡 나의 숲속 섬 & 집</h3>
+                                <p>키보드(WASD/방향키)로 이동하고, 마우스로 땅을 클릭해 배치/회수할 수 있습니다.</p>
+                            </div>
+
+                            <div class="island-3d-scene">
+                                <canvas id="island3DCanvas" aria-label="바다 위 둥근 3D 숲속 섬"></canvas>
+                                <div id="islandMapGrid" class="island-grid-map">
+                                    <!-- JS에서 투명 클릭 셀을 생성 -->
+                                </div>
+                                <div class="island-3d-overlay">
+                                    <span id="vehicleStatus">도보 이동</span>
+                                    <span id="plantStatus">씨앗은 물뿌리개가 있어야 30초 후 자랍니다.</span>
+                                </div>
+                            </div>
+                            
+                            <div class="island-status-bar pixel-box-inner">
+                                <p>🏡 나의 집 등급: <strong id="currentHouseGrade">초라한 아기 텐트</strong></p>
+                                <span class="tip-text">* 포인트로 더 크고 멋진 집을 구입해 보세요! (집은 섬 중앙에 자동 건설됩니다.)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 탭 3: 마법 상점 씬 -->
+                <div id="shopScene" class="tab-scene">
+                    <h2 class="section-title">🧙 마법 상점</h2>
+                    <p class="section-desc">포인트를 사용하여 장비, 장식물, 신비한 동물을 구입해 보세요!</p>
+
+                    <!-- 능력치 가이드 -->
+                    <div class="shop-guide-box pixel-box-inner" style="font-size: 12px; margin-bottom: 15px; line-height: 1.5; text-align: left;">
+                        <h4 style="margin-bottom: 5px; color: var(--forest-dark); font-size: 13px;">💡 장비 능력치 및 활용법</h4>
+                        <p>🏃 <strong>이동 속도 보너스 (신발 장비)</strong>: 높을수록 나의 숲속 섬에서 캐릭터의 걷기 속도가 실시간으로 빨라지며, 최종 방탈출 완료 시 기록 시간(초)이 속도 비율만큼 단축되어 더 빠른 기록으로 탈출할 수 있습니다!</p>
+                        <p>💎 <strong>추가 포인트 획득 (헤어 & 옷 장비)</strong>: 과학 방탈출 문제를 맞출 때마다 기본 포인트에 등급 보너스가 가산되어 더 빠르게 포인트를 모을 수 있습니다. (예: 전설 옷 장착 시 문제당 +6포인트 추가 획득!)</p>
+                    </div>
+
+                    <!-- 상점 카테고리 탭 -->
+                    <div class="shop-tabs">
+                        <button class="shop-tab-btn active pixel-btn-sub" data-category="equipment">🛡️ 캐릭터 장비</button>
+                        <button class="shop-tab-btn pixel-btn-sub" data-category="decorations">🛋️ 섬/집 데코</button>
+                        <button class="shop-tab-btn pixel-btn-sub" data-category="animals">🐿️ 신비한 동물</button>
+                        <button class="shop-tab-btn pixel-btn-sub" data-category="farm">🌱 씨앗/도구</button>
+                        <button class="shop-tab-btn pixel-btn-sub" data-category="vehicles">🏍️ 탈것</button>
+                        <button class="shop-tab-btn pixel-btn-sub" data-category="house">🏡 집 업그레이드</button>
+                    </div>
+
+                    <!-- 상점 물품 목록 -->
+                    <div id="shopItemsGrid" class="shop-items-grid">
+                        <!-- 동적으로 상점 물건들이 들어감 -->
+                    </div>
+                </div>
+
+                <!-- 탭 4: 친구/거래 씬 -->
+                <div id="socialScene" class="tab-scene">
+                    <h2 class="section-title">🤝 친구 집과 옷 거래</h2>
+                    <p class="section-desc">아이디로 친구를 추가하고, 친구 집을 방문하거나 옷 거래 제안을 보낼 수 있습니다.</p>
+
+                    <div class="social-grid">
+                        <div class="pixel-box-inner social-panel">
+                            <h3>친구 추가하기</h3>
+                            <div class="social-input-row">
+                                <input type="text" id="friendIdInput" placeholder="친구 아이디 입력" maxlength="12">
+                                <button id="addFriendBtn" class="pixel-btn btn-primary small">추가</button>
+                            </div>
+                            <button id="visitFriendBtn" class="pixel-btn btn-secondary full">친구 집 가기</button>
+                            <div id="friendsList" class="friend-list"></div>
+                        </div>
+
+                        <div class="pixel-box-inner social-panel">
+                            <h3>사람과 옷 거래하기</h3>
+                            <div class="social-input-row">
+                                <select id="tradeFriendSelect"></select>
+                                <select id="tradeItemSelect"></select>
+                            </div>
+                            <button id="tradeBtn" class="pixel-btn btn-primary full">옷 거래 제안 보내기</button>
+                            <div id="tradeLog" class="trade-log"></div>
+                        </div>
+                    </div>
+
+                    <div id="friendVisitPanel" class="friend-visit-panel">
+                        <div class="friend-house-scene">
+                            <div id="friendHouseAvatar" class="friend-house-avatar">🏡</div>
+                            <div>
+                                <h3 id="friendHouseTitle">방문할 친구를 선택하세요</h3>
+                                <p id="friendHouseDesc">친구 집 가기 버튼을 누르면 누구의 집으로 갈지 고를 수 있습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 퀴즈 풀이 씬 (모달 형태) -->
+                <div id="quizScene" class="quiz-scene">
+                    <div class="quiz-container pixel-box">
+                        <!-- 돌발 넌센스 안내판 -->
+                        <div id="nonsenseBanner" class="nonsense-banner" style="display: none;">
+                            🚨 돌발! 25% 확률 넌센스 퀴즈 장애물 등장! 🚨
+                        </div>
+
+                        <div class="quiz-header">
+                            <h2 id="quizTitle">🧪 과학 탐구 미션</h2>
+                            <p id="quizPoints" class="points-gain-indicator">+10 포인트</p>
+                        </div>
+
+                        <div id="quizQuestion" class="quiz-question pixel-box-inner">
+                            질문 텍스트가 여기에 표시됩니다.
+                        </div>
+
+                        <!-- 1. OX용 입력 인터페이스 -->
+                        <div id="quizOXInterface" class="quiz-input-interface">
+                            <div class="quiz-buttons">
+                                <button id="quizTrueBtn" class="btn-true pixel-btn">
+                                    <span class="circle">O</span>
+                                    맞음
+                                </button>
+                                <button id="quizFalseBtn" class="btn-false pixel-btn">
+                                    <span class="circle">X</span>
+                                    틀림
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 2. CHOICE용 입력 인터페이스 -->
+                        <div id="quizChoiceInterface" class="quiz-input-interface" style="display: none;">
+                            <div id="choiceButtonsContainer" class="choice-buttons-grid">
+                                <!-- 객관식 버튼 4개가 들어감 -->
+                            </div>
+                        </div>
+
+                        <div class="quiz-control-area">
+                            <p id="quizFeedback" class="quiz-feedback"></p>
+                            <button id="btnNextAfterFeedback" class="pixel-btn btn-primary" style="display: none;">계속하기 ➔</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 완료 씬 -->
+                <div id="completeScene" class="complete-scene">
+                    <div class="complete-container pixel-box-inner">
+                        <h1>🎉 과학의 숲 대탈출 성공! 🎉</h1>
+                        <div class="victory-sprite">🏆👑🌲</div>
+                        <p id="finalMessage" class="final-message">축하합니다! 33개의 과학 수수께끼를 모두 풀고 왕관을 획득했습니다!</p>
+                        
+                        <div class="final-stats pixel-box-inner">
+                            <p>💎 최종 획득 포인트: <strong id="finalPoints">0</strong> 포인트</p>
+                            <p>⏱️ 탈출 소요 시간: <strong id="timeElapsed">0</strong> 초</p>
+                            <p>🏡 최종 집 등급: <strong id="finalHouse">초라한 아기 텐트</strong></p>
+                        </div>
+                        
+                        <p class="restart-guide">계속 남아서 섬을 꾸미거나, 처음부터 새로 도전해 보세요!</p>
+                        <div class="complete-buttons">
+                            <button id="btnStayAndDecorate" class="pixel-btn btn-secondary">숲속 섬 더 꾸미기</button>
+                            <button id="restartBtn" class="pixel-btn btn-primary">다시 처음부터 하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 배치 모달 (섬 셀을 클릭할 때 뜨는 대화창) -->
+    <div id="placementModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content pixel-box">
+            <h3 id="placementModalTitle">그리드 셀 작업</h3>
+            <p id="placementModalDesc">무엇을 배치하시겠습니까?</p>
+            
+            <div id="placementModalOptions" class="placement-modal-options">
+                <!-- 동적으로 채워짐 -->
+            </div>
+            
+            <button id="btnCancelPlacement" class="pixel-btn btn-secondary">취소</button>
+        </div>
+    </div>
+
+    <!-- 스크립트 로드 순서 준수 -->
+    <script src="character.js"></script>
+    <script src="missions.js"></script>
+    <script src="quiz.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
+    <script src="visual3d.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

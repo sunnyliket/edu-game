@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="6학년 1학기 과학 전 단원 1인칭 3D 과학실 탈출 퀴즈 게임">
+  <title>과학실 탈출</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="game-container">
+    <section id="rules-screen" class="screen active" aria-labelledby="rules-title">
+      <div class="lab-wall"></div>
+      <div class="rules-panel">
+        <p class="eyebrow">처음 시작 규칙서</p>
+        <h1 id="rules-title">과학실 탈출</h1>
+        <p class="rules-lead">
+          과학실에 갇힌 주인공(1인칭 시점)이 되어, 6학년 1학기 과학 교과서 속 문제를 풀어 4개의 잠겨진 방을 탈출하는 게임입니다. 살짝 으스스하지만 너무 어둡지 않은 과학실에서 사물함 속 준비물을 조사해보세요.
+        </p>
+
+        <div class="rule-grid" aria-label="게임 규칙">
+          <div>
+            <strong>목표 및 규칙</strong>
+            <span>유저의 이름을 설정하세요. 총 60문제를 해결한 후 최종적으로 집으로 안전하게 돌아갑니다.</span>
+          </div>
+          <div>
+            <strong>시점 및 배경</strong>
+            <span>1인칭 / 3D 시점. 단원별 방안에 배치된 다양한 과학 실험 준비물이 사물함과 실험대에 넣어져 있습니다.</span>
+          </div>
+          <div>
+            <strong>방탈출 아이템</strong>
+            <span>1단원: 산성/염기성 용액 · 2단원: 초시계, 미니카 · 3단원: 여러가지 화분 · 4단원: 지구본</span>
+          </div>
+          <div>
+            <strong>조작 및 조사</strong>
+            <span>컴퓨터에 있는 위, 아래, 왼쪽, 오른쪽 키(방향키)로 움직여 조사할 아이템 근처에서 Space 또는 Enter를 입력합니다.</span>
+          </div>
+        </div>
+
+        <label class="name-field" for="player-name">
+          <span>유저 이름 설정</span>
+          <input id="player-name" type="text" maxlength="12" autocomplete="off" placeholder="이름을 입력하세요">
+        </label>
+
+        <button id="start-game" class="primary-btn" type="button">규칙 확인하고 시작</button>
+      </div>
+    </section>
+
+    <section id="game-screen" class="screen" aria-label="과학실 탐색 화면">
+      <header id="hud">
+        <div>
+          <span class="hud-label">탐험자</span>
+          <strong id="hud-name">학생</strong>
+        </div>
+        <div>
+          <span class="hud-label">현재 단원</span>
+          <strong id="hud-room">1단원: 산과 염기</strong>
+        </div>
+        <div>
+          <span class="hud-label">진행도</span>
+          <strong><span id="hud-room-progress">0 / 15</span> · <span id="hud-total-progress">0 / 60</span></strong>
+        </div>
+      </header>
+
+      <div id="unit-tabs" aria-label="단원 진행 상태"></div>
+
+      <div id="lab-scene" class="unit-acid">
+        <div class="ceiling">
+          <span class="lamp"></span>
+          <span class="lamp small"></span>
+        </div>
+        <div class="back-shelf"></div>
+        <div class="locker-row">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="floor-grid"></div>
+        <div id="room-objects"></div>
+        <div id="focus" aria-hidden="true">
+          <span class="focus-ring"></span>
+          <span class="focus-dot"></span>
+        </div>
+        <div id="interact-prompt" class="hidden" role="status"></div>
+      </div>
+
+      <footer id="control-strip">
+        <span>↑ ↓ ← → 이동</span>
+        <span>Space / Enter 조사</span>
+        <span>숫자키 1-4 답 선택</span>
+      </footer>
+    </section>
+
+    <section id="victory-screen" class="screen" aria-labelledby="victory-title">
+      <div class="home-scene">
+        <div class="moon"></div>
+        <div class="home">
+          <span class="roof"></span>
+          <span class="house-body"></span>
+          <span class="door"></span>
+          <span class="window left"></span>
+          <span class="window right"></span>
+        </div>
+      </div>
+      <div class="victory-panel">
+        <p class="eyebrow">귀가 완료</p>
+        <h1 id="victory-title">집으로 돌아왔습니다</h1>
+        <p id="victory-message"></p>
+        <button id="restart-game" class="primary-btn" type="button">처음부터 다시</button>
+      </div>
+    </section>
+
+    <div id="quiz-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
+      <div class="modal-backdrop"></div>
+      <article class="quiz-card">
+        <div class="quiz-topline">
+          <span id="quiz-icon" class="quiz-icon">🧪</span>
+          <div>
+            <p id="quiz-title" class="quiz-title">문제</p>
+            <p id="quiz-count" class="quiz-count">1 / 15</p>
+          </div>
+        </div>
+        <p id="quiz-question" class="quiz-question"></p>
+        <div id="quiz-options" class="quiz-options"></div>
+        <p id="quiz-result" class="quiz-result hidden" aria-live="polite"></p>
+      </article>
+    </div>
+
+    <div id="transition" class="transition hidden" aria-live="polite">
+      <div id="transition-text"></div>
+    </div>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>

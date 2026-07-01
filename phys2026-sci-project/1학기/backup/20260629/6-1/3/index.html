@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과학쌤의 연애세포 되살리기 프로젝트</title>
+  <meta name="description" content="픽셀 아트 스토리 형식의 초등 6학년 과학 퀴즈 게임. 선생님과 썸녀의 데이트를 따라가며 60개의 과학 문제를 풀어보세요.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell" aria-live="polite">
+
+    <!-- 타이틀바 -->
+    <header class="titlebar">
+      <div class="title-group">
+        <p class="game-label">COZY SCIENCE DATE</p>
+        <h1>과학쌤의 연애세포 되살리기 프로젝트</h1>
+      </div>
+      <button class="btn-reset" id="resetButton" type="button" aria-label="처음부터 다시 시작">RESET</button>
+    </header>
+
+    <!-- HUD -->
+    <section class="hud" aria-label="게임 진행 상태">
+      <div class="hud-left">
+        <span class="hud-label">호감도</span>
+        <div class="heart-bar">
+          <div class="heart-fill" id="heartFill"></div>
+        </div>
+        <span class="hud-val" id="affectionText">0%</span>
+      </div>
+      <div class="hud-center">
+        <span class="hud-unit" id="unitText">프롤로그</span>
+      </div>
+      <div class="hud-right">
+        <span class="hud-label">정답</span>
+        <strong class="hud-val" id="questionText">0 / 60</strong>
+      </div>
+    </section>
+
+    <!-- 게임 화면 (고해상도 픽셀 장면 + 대화창) -->
+    <section class="game-screen" aria-label="픽셀 데이트 화면">
+
+      <!-- 장소 라벨 -->
+      <div class="place-tag" id="placeText">카페</div>
+
+      <!-- 픽셀 캔버스 영역 -->
+      <div class="canvas-wrap">
+        <canvas id="bgCanvas"   width="960" height="540" aria-hidden="true"></canvas>
+        <canvas id="charCanvas" width="960" height="540" aria-hidden="true"></canvas>
+      </div>
+
+      <!-- 대화/질문 박스 -->
+      <div class="dialogue-box" id="dialogueBox">
+        <div class="dlg-header">
+          <span class="speaker-badge" id="speakerName">과학쌤</span>
+          <span class="mode-badge"    id="modeText">대화</span>
+          <span class="q-counter hidden" id="qCounter">Q 1 / 15</span>
+        </div>
+        <p class="dlg-text" id="dialogueText"></p>
+        <div class="answer-grid hidden" id="answerGrid"></div>
+        <p class="feedback-text" id="feedbackText" role="status"></p>
+        <div class="dlg-footer">
+          <button class="btn-next" id="nextButton" type="button">다음 ▶</button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- 엔딩 오버레이 -->
+  <div class="ending hidden" id="ending" role="dialog" aria-modal="true" aria-labelledby="endingTitle">
+    <div class="ending-card">
+      <canvas id="endingCanvas" width="120" height="120" aria-hidden="true"></canvas>
+      <div class="ending-badge">❤ LOVE 100% ❤</div>
+      <h2 id="endingTitle">연애세포 완전 부활!</h2>
+      <p>과학쌤은 4단원 60개의 과학 퀴즈를 차례대로 풀어내며<br>썸녀의 마음에 무사히 도착했습니다.</p>
+      <button id="endingRestartButton" type="button">처음부터 다시 ↺</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

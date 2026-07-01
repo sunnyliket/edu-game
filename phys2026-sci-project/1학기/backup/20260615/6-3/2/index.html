@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>여선이의 과학 고백 작전</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="game-shell">
+    <header class="top-bar">
+      <div>
+        <p class="eyebrow">Science Romance Game</p>
+        <h1>여선이의 과학 고백 작전</h1>
+      </div>
+      <div class="status-panel" aria-label="게임 상태">
+        <div class="status-chip">
+          <span>목숨</span>
+          <strong id="livesText">5</strong>
+        </div>
+        <div class="status-chip">
+          <span>호감도</span>
+          <strong id="affectionText">0</strong>
+        </div>
+      </div>
+    </header>
+
+    <nav class="progress-map" aria-label="진행 단계">
+      <span class="progress-dot active" data-step="classroom">교실</span>
+      <span class="progress-dot" data-step="shop">백화점</span>
+      <span class="progress-dot" data-step="salon">미용실</span>
+      <span class="progress-dot" data-step="confession">고백</span>
+    </nav>
+
+    <section class="scene-card" id="sceneCard">
+      <div class="scene-visual classroom" id="sceneVisual" aria-hidden="true">
+        <div class="room-prop desk left-desk"></div>
+        <div class="room-prop desk right-desk"></div>
+        <div class="room-prop counter"></div>
+        <div class="room-prop mirror"></div>
+        <div class="room-prop flower-stand"></div>
+
+        <div class="character yesun" id="yesunAvatar">
+          <div class="hair"></div>
+          <div class="head">
+            <span class="eye left"></span>
+            <span class="eye right"></span>
+            <span class="mouth"></span>
+          </div>
+          <div class="neck"></div>
+          <div class="body">
+            <span class="accessory"></span>
+          </div>
+          <div class="arm left"></div>
+          <div class="arm right"></div>
+          <div class="leg left"></div>
+          <div class="leg right"></div>
+          <div class="shoe left"></div>
+          <div class="shoe right"></div>
+        </div>
+
+        <div class="character yongsan" id="yongsanAvatar">
+          <div class="hair"></div>
+          <div class="head">
+            <span class="eye left"></span>
+            <span class="eye right"></span>
+            <span class="mouth"></span>
+          </div>
+          <div class="neck"></div>
+          <div class="body">
+            <span class="tie"></span>
+          </div>
+          <div class="arm left"></div>
+          <div class="arm right"></div>
+          <div class="leg left"></div>
+          <div class="leg right"></div>
+          <div class="shoe left"></div>
+          <div class="shoe right"></div>
+        </div>
+
+        <div class="staff clerk" id="clerkAvatar">
+          <div class="staff-head"></div>
+          <div class="staff-body"></div>
+        </div>
+
+        <div class="staff hairdresser" id="hairdresserAvatar">
+          <div class="staff-head"></div>
+          <div class="staff-body"></div>
+        </div>
+      </div>
+
+      <div class="dialogue-box">
+        <p class="speaker" id="speakerName">여선</p>
+        <p class="dialogue-text" id="dialogueText">안되겠어.. 용산이에게 고백해야겠다!</p>
+      </div>
+
+      <div class="content-area" id="contentArea"></div>
+    </section>
+  </main>
+</body>
+</html>

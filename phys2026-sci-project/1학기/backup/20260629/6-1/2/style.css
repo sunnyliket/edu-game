@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+body, html {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background-color: #050505;
+    font-family: 'Inter', sans-serif; user-select: none;
+}
+canvas { display: block; width: 100vw; height: 100vh; }
+
+#crosshair {
+    position: absolute; top: 50%; left: 50%;
+    width: 6px; height: 6px; background: white;
+    border-radius: 50%; transform: translate(-50%, -50%);
+    pointer-events: none; z-index: 10;
+}
+
+#health-ui, #boss-health-ui, #stage-ui {
+    position: absolute;
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px; font-size: 24px; font-weight: 800;
+    border-radius: 8px; z-index: 10;
+}
+#health-ui { bottom: 30px; left: 30px; color: #ff4757; }
+#boss-health-ui { top: 30px; left: 50%; transform: translateX(-50%); color: #9b59b6; }
+#stage-ui { top: 30px; right: 30px; color: #f1c40f; }
+.hidden { display: none !important; }
+
+#tooltip-ui {
+    position: absolute; top: 60%; left: 50%; transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8); color: white; padding: 10px 20px;
+    border-radius: 8px; font-size: 16px; pointer-events: none; z-index: 10;
+}
+
+#popup-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8); display: flex;
+    justify-content: center; align-items: center; z-index: 100;
+}
+#popup-content {
+    background: #1e1e23; padding: 40px; border-radius: 20px;
+    width: 80%; max-width: 600px; color: white; text-align: center;
+}
+#popup-title { color: #3ae374; margin-bottom: 20px; }
+#popup-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;}
+.option-btn {
+    background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: white; padding: 15px; border-radius: 10px; cursor: pointer;
+}
+.option-btn:hover { background: rgba(255,255,255,0.2); }
+#popup-close {
+    background: #ff4757; border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer;
+}
+
+#start-screen {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: #1a1a2e; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; color: white; z-index: 200;
+}
+#start-btn {
+    margin-top: 30px; padding: 15px 40px; font-size: 20px;
+    background: #17c0eb; border: none; border-radius: 30px; cursor: pointer; color: white;
+}

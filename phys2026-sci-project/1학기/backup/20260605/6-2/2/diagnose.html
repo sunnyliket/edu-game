@@ -1,0 +1,49 @@
+<!-- 게임 동작 테스트용 파일 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>게임 진단</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .test-item { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+        .pass { background: #d4edda; }
+        .fail { background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>게임 파일 로드 진단</h1>
+    
+    <div id="tests"></div>
+    
+    <script>
+        const tests = document.getElementById('tests');
+        
+        function addTest(name, passed) {
+            const item = document.createElement('div');
+            item.className = `test-item ${passed ? 'pass' : 'fail'}`;
+            item.textContent = `${passed ? '✓' : '✗'} ${name}`;
+            tests.appendChild(item);
+        }
+        
+        // 모든 스크립트가 로드되었는지 확인
+        setTimeout(() => {
+            addTest('character 객체', typeof character !== 'undefined');
+            addTest('missionSystem 객체', typeof missionSystem !== 'undefined');
+            addTest('quizSystem 객체', typeof quizSystem !== 'undefined');
+            addTest('gameManager 객체', typeof gameManager !== 'undefined');
+            
+            // DOM 요소 확인
+            addTest('characterScreen', document.getElementById('characterScreen') !== null);
+            addTest('gameScreen', document.getElementById('gameScreen') !== null);
+            addTest('roomScene', document.getElementById('roomScene') !== null);
+            addTest('quizScene', document.getElementById('quizScene') !== null);
+            addTest('completeScene', document.getElementById('completeScene') !== null);
+            addTest('missionsList', document.getElementById('missionsList') !== null);
+            
+            // CSS 로드 확인
+            addTest('style.css 로드', document.styleSheets.length > 0);
+        }, 100);
+    </script>
+</body>
+</html>

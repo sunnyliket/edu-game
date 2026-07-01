@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>과학 방탈출</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+    <canvas id="gameCanvas" aria-label="과학 방탈출 게임 화면"></canvas>
+
+    <section class="hud" aria-label="게임 정보">
+      <div class="brand">
+        <span class="brand-mark">SCI</span>
+        <div>
+          <h1>과학 방탈출</h1>
+          <p>4개 단원의 문제를 풀어 과학실을 탈출하세요.</p>
+        </div>
+      </div>
+      <div class="stats">
+        <div><strong id="scoreText">0</strong><span>정답</span></div>
+        <div><strong id="progressText">0/60</strong><span>문제</span></div>
+      </div>
+    </section>
+
+    <aside class="mission-panel" aria-label="임무">
+      <h2>현재 목표</h2>
+      <p id="missionText">과학실 물건을 조사해 4개 단원 문제를 모두 푸세요.</p>
+      <div class="unit-progress" id="unitProgress"></div>
+    </aside>
+
+    <div class="prompt" id="prompt" hidden>
+      <span id="promptText"></span>
+      <button id="promptButton" type="button">확인</button>
+    </div>
+
+    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+    <div class="star-layer" id="starLayer" aria-hidden="true"></div>
+
+    <nav class="mobile-controls" aria-label="모바일 조작">
+      <div class="stick" id="stick">
+        <div class="stick-knob" id="stickKnob"></div>
+      </div>
+      <button class="action-button" id="mobileAction" type="button">조사</button>
+    </nav>
+
+    <section class="help-strip">
+      <span>WASD 이동</span>
+      <span>마우스/손가락 드래그로 시점 이동</span>
+      <span>E 또는 조사 버튼</span>
+    </section>
+
+    <dialog class="modal" id="startModal">
+      <div class="modal-card intro-card">
+        <h2>과학실에서 탈출하기</h2>
+        <p>
+          흰색 과학실 안에 있는 문제 물건을 찾아보세요.
+          캐릭터를 움직여 가까이 다가가면 조사할 수 있습니다.
+        </p>
+        <ul>
+          <li>산과 염기, 물체의 이동, 식물의 구조와 기능, 지구의 운동을 모두 풉니다.</li>
+          <li>정답을 맞히면 별풍선이 떠오릅니다.</li>
+          <li>모바일과 태블릿에서는 왼쪽 조이스틱과 오른쪽 조사 버튼을 사용합니다.</li>
+        </ul>
+        <button class="primary" id="startButton" type="button">게임 시작</button>
+      </div>
+    </dialog>
+
+    <dialog class="modal" id="quizModal">
+      <div class="modal-card quiz-card">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow" id="quizUnit">단원</p>
+            <h2 id="quizTitle">문제</h2>
+          </div>
+          <button class="icon-button" id="closeQuiz" type="button" aria-label="닫기">×</button>
+        </div>
+        <p class="question" id="questionText"></p>
+        <div class="choices" id="choices"></div>
+        <p class="feedback" id="feedback" aria-live="polite"></p>
+      </div>
+    </dialog>
+
+    <dialog class="modal" id="characterModal">
+      <div class="modal-card character-card">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">캐릭터</p>
+            <h2>캐릭터 선택</h2>
+          </div>
+          <button class="icon-button" id="closeCharacter" type="button" aria-label="닫기">×</button>
+        </div>
+        <div class="character-grid">
+          <button class="character-option selected" id="boyCharacter" type="button" data-character="boy">
+            <span class="character-preview boy-preview" aria-hidden="true"></span>
+            <strong>남자 캐릭터</strong>
+          </button>
+          <button class="character-option" id="girlCharacter" type="button" data-character="girl">
+            <span class="character-preview girl-preview" aria-hidden="true"></span>
+            <strong>여자 캐릭터</strong>
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="modal" id="escapeModal">
+      <div class="modal-card escape-card">
+        <h2>방에서 탈출완료!</h2>
+        <p>모든 과학 문제를 해결했습니다. 게임을 다시 플레이할 수 있어요.</p>
+        <div class="result-grid">
+          <span>정답</span><strong id="finalScore">60</strong>
+          <span>단원 완료</span><strong>4/4</strong>
+        </div>
+        <button class="primary" id="restartButton" type="button">게임을 다시 플레이하기</button>
+      </div>
+    </dialog>
+  </main>
+
+  <script src="script.js?v=3d8"></script>
+</body>
+</html>

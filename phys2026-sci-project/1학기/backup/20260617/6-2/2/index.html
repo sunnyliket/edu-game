@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가게 차리기 - 과학 퀴즈 디저트 게임</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="app">
+        <header class="hud">
+            <div>
+                <h1>가게 차리기</h1>
+                <p id="storyText">돈을 벌기 위해 디저트 가게를 차리게 된 플레이어.</p>
+            </div>
+            <div class="hud-stats">
+                <span>장소 <strong id="placeText">마트</strong></span>
+                <span>과학 퀴즈 <strong id="quizCountText">0</strong></span>
+                <span>평판 <strong id="repText">0</strong></span>
+            </div>
+        </header>
+
+        <section id="missionPanel" class="mission-panel">
+            <button id="missionCloseBtn" class="close-btn" aria-label="미션 닫기">×</button>
+            <strong id="missionTitle">미션</strong>
+            <p id="missionText">재료를 사려면 문제를 풀어야 해!</p>
+        </section>
+
+        <section class="layout">
+            <aside class="side-note">
+                <section id="shoppingNote" class="paper-note">
+                    <h2>살 재료</h2>
+                    <ul>
+                        <li data-need="butter">버터</li>
+                        <li data-need="flour">강력분</li>
+                        <li data-need="choco">초코칩</li>
+                        <li data-need="egg">계란</li>
+                    </ul>
+                </section>
+
+                <section class="paper-note compact">
+                    <h2>조작</h2>
+                    <p>WASD / 방향키: 이동</p>
+                    <p>E: 가까운 물건과 상호작용</p>
+                    <p>물건을 클릭해도 상호작용할 수 있어요.</p>
+                </section>
+
+                <section class="paper-note compact">
+                    <h2>주문/레시피</h2>
+                    <p id="orderText">재료를 사서 가게로 돌아가자.</p>
+                    <details>
+                        <summary>메뉴 재료 목록</summary>
+                        <p><b>쿠키</b>: 버터, 박력분, 초코칩, 계란</p>
+                        <p><b>마카롱</b>: 슈가 파우더, 계란흰자, 설탕, 식용색소, 체, 생크림, 휘핑기, 짤주머니</p>
+                        <p><b>에그 타르트</b>: 박력분, 소금, 버터, 설탕, 물, 달걀 노른자, 휘핑크림, 우유, 바닐라 익스트랙</p>
+                        <p><b>도넛</b>: 강력분, 중탕 할 초콜릿, 스프링클, 계란, 버터, 도넛 틀, 체</p>
+                        <p><b>휘낭시에</b>: 계란 흰자, 버터, 아몬드 가루, 소금, 박력분, 설탕, 헤이즐넛 버터</p>
+                    </details>
+                </section>
+            </aside>
+
+            <section class="world-wrap">
+                <div id="world" class="world market-world" aria-label="3인칭 게임 화면">
+                    <div id="worldLabel" class="world-label">MART</div>
+                    <div id="player" class="player third-person" aria-label="플레이어">
+                        <div class="player-shadow"></div>
+                        <div class="player-legs"></div>
+                        <div class="player-body"></div>
+                        <div class="player-head"></div>
+                    </div>
+                    <div id="interactions"></div>
+                    <div id="prompt" class="prompt hidden">E 상호작용</div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <div id="introModal" class="modal visible">
+        <div class="modal-card intro-card">
+            <h2>가게 차리기</h2>
+            <p>돈을 벌기 위해 플레이어는 작은 디저트 가게를 차리기로 했다.</p>
+            <p>먼저 초코칩 쿠키 재료를 사러 마트로 가자.</p>
+            <button id="startBtn" class="main-btn">시작하기</button>
+        </div>
+    </div>
+
+    <div id="quizModal" class="modal">
+        <div class="modal-card quiz-card">
+            <button id="quizCloseBtn" class="close-btn" aria-label="퀴즈 닫기">×</button>
+            <p id="quizBadge" class="quiz-badge">과학 퀴즈</p>
+            <h2 id="quizTitle">문제</h2>
+            <p id="quizQuestion"></p>
+            <div id="quizBody"></div>
+            <p id="quizFeedback" class="feedback"></p>
+        </div>
+    </div>
+
+    <div id="dialogModal" class="modal">
+        <div class="modal-card dialog-card">
+            <h2 id="dialogTitle">알림</h2>
+            <p id="dialogText"></p>
+            <button id="dialogBtn" class="main-btn">확인</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
