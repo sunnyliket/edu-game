@@ -1,0 +1,8 @@
+AI Usage Policy
+
+This website contains educational materials and student-related information.
+
+No AI training.
+No dataset creation.
+No automated scraping.
+No redistribution.
