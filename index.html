@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="index,follow,max-image-preview:none">
   <title>2026학년도 과학 교과</title>
 
   <style>
@@ -174,6 +173,103 @@
       opacity: 0.18;
     }
 
+    .card.recommended {
+      border-color: rgba(99, 102, 241, 0.34);
+      box-shadow:
+        0 20px 38px rgba(79, 70, 229, 0.13),
+        0 18px 35px rgba(15, 23, 42, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    }
+
+    .recommend-medal {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      z-index: 2;
+      width: 64px;
+      height: 80px;
+      pointer-events: none;
+      transform: rotate(3deg);
+      transform-origin: 50% 16px;
+    }
+
+    .medal-circle {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid rgba(99, 102, 241, 0.36);
+      color: #4f46e5;
+      box-shadow: 0 10px 22px rgba(79, 70, 229, 0.16);
+      font-size: 0.72rem;
+      font-weight: 950;
+      line-height: 1.15;
+      letter-spacing: 0;
+      text-align: center;
+      white-space: normal;
+    }
+
+    .medal-circle::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border-radius: inherit;
+      border: 1px solid rgba(79, 70, 229, 0.12);
+    }
+
+    .medal-ribbon {
+      position: absolute;
+      top: 48px;
+      width: 22px;
+      height: 30px;
+      background: linear-gradient(180deg, #6366f1, #38bdf8);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      box-shadow: 0 8px 14px rgba(79, 70, 229, 0.12);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%);
+    }
+
+    .medal-ribbon.left {
+      left: 15px;
+      transform: rotate(10deg);
+      background: linear-gradient(180deg, #6366f1, #60a5fa);
+    }
+
+    .medal-ribbon.right {
+      right: 15px;
+      transform: rotate(-10deg);
+      background: linear-gradient(180deg, #4f46e5, #22d3ee);
+    }
+
+    .recommend-medal.representative .medal-circle {
+      background: linear-gradient(135deg, #fff8e6, #fff3c4);
+      border-color: rgba(232, 199, 102, 0.82);
+      color: #8a6a00;
+      box-shadow: 0 10px 22px rgba(217, 164, 65, 0.16);
+    }
+
+    .recommend-medal.representative .medal-circle::before {
+      border-color: rgba(232, 199, 102, 0.36);
+    }
+
+    .recommend-medal.representative .medal-ribbon {
+      border-color: rgba(217, 164, 65, 0.26);
+      box-shadow: 0 8px 14px rgba(217, 164, 65, 0.12);
+    }
+
+    .recommend-medal.representative .medal-ribbon.left {
+      background: linear-gradient(180deg, #e7c45a, #d9a441);
+    }
+
+    .recommend-medal.representative .medal-ribbon.right {
+      background: linear-gradient(180deg, #f0d978, #d9a441);
+    }
+
     .card.disabled {
       cursor: not-allowed;
       color: #94a3b8;
@@ -237,7 +333,7 @@
       .semester-toggle { width: 100%; }
       .semester-btn { flex: 1; padding: 13px 0; }
       .grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
         gap: 14px;
       }
       .card {
@@ -245,22 +341,27 @@
         padding: 20px 16px;
         border-radius: 24px;
       }
+      .recommend-medal {
+        top: 10px;
+        right: 10px;
+        width: 58px;
+        height: 74px;
+      }
+      .medal-circle {
+        width: 52px;
+        height: 52px;
+        font-size: 0.68rem;
+      }
+      .medal-ribbon {
+        top: 43px;
+        width: 20px;
+        height: 27px;
+      }
+      .medal-ribbon.left { left: 13px; }
+      .medal-ribbon.right { right: 13px; }
       .group-name { font-size: 1.75rem; }
       .arrow { font-size: 0.85rem; }
     }
-      .copyright {
-        margin-top: 70px;
-        padding: 28px 20px;
-        border-top: 1px solid rgba(148,163,184,.25);
-        text-align: center;
-        color: #64748b;
-        font-size: .9rem;
-        line-height: 1.8;
-      }
-      
-      .copyright strong{
-        color:#334155;
-      }
   </style>
 </head>
 
@@ -283,24 +384,6 @@
     </section>
 
     <section id="classList"></section>
-    <footer class="copyright">
-      <p><strong>© 2026 포항용산초등학교 5-6학년 과학 교과 전담</strong></p>
-    
-      <p>
-        본 사이트는 교육 목적의 수업 자료이며 학생의 성명 등 개인정보가 포함되어 있습니다.
-      </p>
-    
-      <p>
-        저작권자의 사전 서면 허가 없이 본 콘텐츠의 복제, 배포, 재가공,
-        자동수집(크롤링), 데이터셋 구축, 인공지능(AI) 학습,
-        모델 개발 및 기타 유사한 목적으로 이용하는 행위를 금지합니다.
-      </p>
-    
-      <p>
-        Unauthorized copying, redistribution, automated scraping,
-        AI training, dataset creation, or any reuse of this content is prohibited.
-      </p>
-    </footer>
   </main>
 
   <script>
@@ -311,6 +394,8 @@
 
     const classes = [1, 2, 3];
     const groups = [1, 2, 3, 4, 5];
+    const recommendedGameKeys = new Set(["1-1-3", "1-1-2", "1-1-1"]);
+    const highlightedRecommendationKey = "1-1-3";
 
     let currentSemester = 1;
     let availableLinks = new Map();
@@ -387,25 +472,38 @@
           const key = getKey(currentSemester, classNumber, groupNumber);
           const link = availableLinks.get(key);
           const isAvailable = Boolean(link);
+          const isRecommended = recommendedGameKeys.has(key);
+          const isHighlightedRecommendation = key === highlightedRecommendationKey;
+          const recommendationBadge = isRecommended
+            ? `<span class="recommend-medal${isHighlightedRecommendation ? " representative" : ""}" aria-hidden="true">
+                <span class="medal-ribbon left"></span>
+                <span class="medal-ribbon right"></span>
+                <span class="medal-circle">학년<br>추천</span>
+              </span>`
+            : "";
 
           const card = document.createElement(isAvailable ? "a" : "div");
           card.className = isAvailable ? "card" : "card disabled";
+          if (isRecommended) {
+            card.classList.add("recommended");
+          }
 
           if (isAvailable) {
             card.href = link;
             card.setAttribute(
               "aria-label",
-              `${currentSemester}학기 6학년 ${classNumber}반 ${groupNumber}모둠 시작하기`
+              `${currentSemester}학기 6학년 ${classNumber}반 ${groupNumber}모둠 시작하기${isRecommended ? ", 학년 친구들이 추천한 게임" : ""}`
             );
           } else {
             card.setAttribute("aria-disabled", "true");
             card.setAttribute(
               "aria-label",
-              `${currentSemester}학기 6학년 ${classNumber}반 ${groupNumber}모둠은 아직 준비되지 않았습니다`
+              `${currentSemester}학기 6학년 ${classNumber}반 ${groupNumber}모둠은 아직 준비되지 않았습니다${isRecommended ? ", 학년 친구들이 추천한 게임" : ""}`
             );
           }
 
           card.innerHTML = `
+            ${recommendationBadge}
             <span class="class-name">6학년 ${classNumber}반</span>
             <span class="group-name">${groupNumber}모둠</span>
             <span class="arrow">${isAvailable ? "시작하기 →" : "준비 중"}</span>
